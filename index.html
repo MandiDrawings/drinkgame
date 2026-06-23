@@ -7,70 +7,78 @@
 
 <style>
 body {
-  margin: 0;
-  background: black;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  touch-action: manipulation;
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 /* 🌌 STARFIELD */
 #stars {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(circle at center, #05060a 0%, black 70%);
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: black;
 }
 
-/* 🎬 CRAWL MOBILE */
+/* 🎬 CRAWL CONTAINER (FIX MOBILE STAR WARS) */
 .crawl-container {
-  position: relative;
-  height: 100vh;
-  perspective: 280px;
-  display: flex;
-  justify-content: center;
-  color: #ffe81f;
+  position: fixed;
+  inset: 0;
+  perspective: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
 }
 
+/* 🎬 CRAWL PROPRE */
 .crawl {
-  position: absolute;
-  bottom: -220%;
-  width: 100%;
+  position: absolute;
 
-  transform-origin: 50% 100%;
-  transform: rotateX(38deg);
+  width: 88vw;
+  max-width: 620px;
 
-  animation: crawl 65s linear forwards;
+  bottom: -200%;
 
-  font-size: 8vw;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  transform-origin: 50% 100%;
+  transform: rotateX(45deg);
 
-  padding: 0 6vw;
-  line-height: 1.9;
+  animation: crawl 35s linear forwards;
 
-  text-align: justify;
+  font-size: 6.5vw;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  line-height: 1.8;
 
-  text-shadow:
-    0 0 10px rgba(255,232,31,0.5),
-    0 0 20px rgba(255,232,31,0.2);
+  text-transform: uppercase;
+  text-align: justify;
+
+  color: #ffe81f;
+
+  text-shadow:
+    0 0 8px rgba(255,232,31,0.6),
+    0 0 18px rgba(255,232,31,0.3);
 }
 
+/* 🎬 DÉFILEMENT STAR WARS RÉEL */
 @keyframes crawl {
-  0% { transform: rotateX(38deg) translateY(120%); }
-  100% { transform: rotateX(38deg) translateY(-280%); }
+  0% { transform: rotateX(45deg) translateY(50%); }
+  100% { transform: rotateX(45deg) translateY(-260%); }
 }
 
-/* 🔴 FLASH */
-.flash {
-  animation: flash 0.4s ease;
-}
-
-@keyframes flash {
-  0% { background: rgba(0,0,0,0); }
-  50% { background: rgba(255,0,0,0.35); }
-  100% { background: rgba(0,0,0,0); }
+/* 🌌 VIGNETTE CINÉMA */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0,0,0,0.5) 60%,
+    black 100%
+  );
+  pointer-events: none;
 }
 </style>
 </head>
@@ -80,7 +88,7 @@ body {
 <canvas id="stars"></canvas>
 
 <div class="crawl-container">
-  <div class="crawl">
+  <div class="crawl">
 
 A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
@@ -88,21 +96,21 @@ THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
 
 ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
-THIS TRANSMISSION IS AN ACTIVE INTERCEPTION.
+THIS TRANSMISSION WAS ACTIVATED FROM A SECURE IMPERIAL RELAY NODE.
 
 —
 
 GROGU TRANSMISSION
 
-YOU HAVE ACTIVATED A COMPROMISED IMPERIAL RELAY NODE.
+YOU HAVE ACCESSED A COMPROMISED SIGNAL.
 
 THIS IS NOT A LOCATION TO SEARCH.
 
 THIS IS A LIVE BROADCAST.
 
-THE MESSAGE WAS DELIVERED THROUGH A SECURE DROP POINT.
+THE MESSAGE WAS DELIVERED DIRECTLY TO YOU.
 
-YOUR MISSION HAS ALREADY STARTED.
+YOUR MISSION HAS ALREADY BEGUN.
 
 THE EMPIRE IS LISTENING.
 
@@ -113,21 +121,21 @@ DO NOT BREAK THE LINK.
 ACCESS CODE:
 CITRON-OVERRIDE
 
-  </div>
+  </div>
 </div>
 
 <script>
 
 /* =========================
-   🌌 STARFIELD (FAST FIX)
+   🌌 STARFIELD SIMPLE + VISIBLE
 ========================= */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
 function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
 resize();
 window.addEventListener("resize", resize);
@@ -135,168 +143,155 @@ window.addEventListener("resize", resize);
 const stars = [];
 
 for(let i=0;i<300;i++){
-  stars.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    z: Math.random()*canvas.width
-  });
+  stars.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    z: Math.random()*canvas.width
+  });
 }
 
 function draw(){
 
-  ctx.fillStyle = "black";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  for(let s of stars){
+  for(let s of stars){
 
-    s.z -= 1.8;
+    s.z -= 1.5;
 
-    if(s.z <= 0){
-      s.x = Math.random()*canvas.width;
-      s.y = Math.random()*canvas.height;
-      s.z = canvas.width;
-    }
+    if(s.z <= 0){
+      s.x = Math.random()*canvas.width;
+      s.y = Math.random()*canvas.height;
+      s.z = canvas.width;
+    }
 
-    const k = 220 / s.z;
-    const px = (s.x - canvas.width/2) * k + canvas.width/2;
-    const py = (s.y - canvas.height/2) * k + canvas.height/2;
+    const k = 200 / s.z;
 
-    if(px>0 && px<canvas.width && py>0 && py<canvas.height){
+    const px = (s.x - canvas.width/2) * k + canvas.width/2;
+    const py = (s.y - canvas.height/2) * k + canvas.height/2;
 
-      const size = 2 * (1 - s.z / canvas.width);
+    if(px > 0 && px < canvas.width && py > 0 && py < canvas.height){
 
-      ctx.fillStyle = "white";
-      ctx.fillRect(px, py, size, size);
-    }
-  }
+      const size = 2 * (1 - s.z / canvas.width);
 
-  requestAnimationFrame(draw);
+      ctx.fillStyle = "white";
+      ctx.fillRect(px, py, size, size);
+    }
+  }
+
+  requestAnimationFrame(draw);
 }
 draw();
 
 /* =========================
-   🔊 AUDIO SIMPLE + CINÉMA
+   🔊 AUDIO SIMPLE
 ========================= */
 
 let audioCtx;
 
 function initAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
 }
 
 function beep(){
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
 
-  o.type = "square";
-  o.frequency.value = 500 + Math.random()*600;
+  o.type = "square";
+  o.frequency.value = 500 + Math.random()*400;
 
-  g.gain.value = 0.1;
+  g.gain.value = 0.08;
 
-  o.connect(g);
-  g.connect(audioCtx.destination);
+  o.connect(g);
+  g.connect(audioCtx.destination);
 
-  o.start();
-  o.stop(audioCtx.currentTime + 0.07);
+  o.start();
+  o.stop(audioCtx.currentTime + 0.06);
 }
 
 /* 🎼 MUSIQUE SIMPLE PROGRESSIVE */
 function music(){
-  const gain = audioCtx.createGain();
-  gain.gain.value = 0;
-  gain.connect(audioCtx.destination);
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0;
+  gain.connect(audioCtx.destination);
 
-  const osc = audioCtx.createOscillator();
-  osc.type = "sawtooth";
-  osc.frequency.value = 55;
+  const osc = audioCtx.createOscillator();
+  osc.type = "sawtooth";
+  osc.frequency.value = 60;
 
-  osc.connect(gain);
-  osc.start();
+  osc.connect(gain);
+  osc.start();
 
-  gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 10);
+  gain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 10);
 }
 
-/* 🎤 VOIX SYNCHRO */
+/* 🎤 VOIX SYNCHRONISÉE */
 const lines = [
-  "Danger.",
-  "Sacred citrus lost.",
-  "This is a live interception.",
-  "The Empire is listening.",
-  "Do not break the link.",
-  "Access code Citron Override."
+  "Danger.",
+  "Sacred citrus lost.",
+  "Transmission compromised.",
+  "The Empire is listening.",
+  "Do not break the link.",
+  "Access code Citron Override."
 ];
 
 function voice(){
 
-  let t = 0;
+  let t = 0;
 
-  lines.forEach((l,i)=>{
+  lines.forEach((l,i)=>{
 
-    setTimeout(()=>{
+    setTimeout(()=>{
 
-      const msg = new SpeechSynthesisUtterance(l);
-      msg.lang = "en-GB";
-      msg.rate = 0.72;
-      msg.pitch = 0.25;
+      const msg = new SpeechSynthesisUtterance(l);
+      msg.lang = "en-GB";
+      msg.rate = 0.72;
+      msg.pitch = 0.25;
 
-      speechSynthesis.speak(msg);
+      speechSynthesis.speak(msg);
 
-      beep();
+      beep();
 
-      if(i === 2 || i === 3){
-        document.body.classList.add("flash");
-        setTimeout(()=>document.body.classList.remove("flash"),400);
-      }
+    }, t);
 
-      if(i === 5){
-        if(navigator.vibrate){
-          navigator.vibrate(200);
-        }
-      }
-
-    }, t);
-
-    t += 1200;
-  });
+    t += 1200;
+  });
 }
 
 /* =========================
-   🚀 START LOGIC (CLEAN)
+   🚀 START (CLEAN FLOW)
 ========================= */
 
 function start(){
 
-  initAudio();
-  audioCtx.resume();
+  initAudio();
+  audioCtx.resume();
 
-  // étoiles immédiates OK
-  for(let i=0;i<5;i++){
-    setTimeout(beep,i*200);
-  }
+  // étoiles déjà actives
 
-  // musique après démarrage
-  setTimeout(()=>{
-    music();
-  },1200);
+  // musique après un court délai
+  setTimeout(()=>{
+    music();
+  },1200);
 
-  // voix plus tard (cinéma)
-  setTimeout(()=>{
-    voice();
-  },8500);
+  // voix après crawl lisible
+  setTimeout(()=>{
+    voice();
+  },8500);
 }
 
 /* =========================
-   📱 MOBILE / NFC
+   📱 MOBILE / NFC TRIGGER
 ========================= */
 
 document.addEventListener("click",()=>{
-  start();
+  start();
 },{once:true});
 
 setTimeout(()=>{
-  start();
+  start();
 },12000);
 
 </script>
