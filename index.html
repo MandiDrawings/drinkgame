@@ -1,59 +1,121 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Imperial Transmission</title>
+
 <style>
-    body, html { margin: 0; padding: 0; height: 100%; background-color: black; color: #ffe81f; font-family: 'Times New Roman', serif; overflow: hidden; }
-    
-    /* Image de fond fixe */
-    #background-space { 
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); 
-        z-index: -1; 
-    }
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
 
-    /* Conteneur texte */
-    .transmission-container { 
-        position: relative; width: 80%; margin: 50px auto; 
-        font-size: 24px; text-transform: uppercase; line-height: 1.5; 
-    }
+/* Container perspective */
+.crawl-container {
+  position: relative;
+  height: 100vh;
+  perspective: 400px;
+  color: #ffe81f;
+  text-align: justify;
+}
 
-    .code { color: #00ff41; font-weight: bold; margin-top: 30px; }
+/* Crawl animation */
+.crawl {
+  position: absolute;
+  bottom: -100%;
+  width: 100%;
+  transform-origin: 50% 100%;
+  transform: rotateX(25deg);
+  animation: crawl 45s linear forwards;
+  font-size: 28px;
+  padding: 0 15%;
+  line-height: 1.6;
+}
+
+@keyframes crawl {
+  0% {
+    bottom: -100%;
+    transform: rotateX(25deg) translateZ(0);
+  }
+  100% {
+    bottom: 200%;
+    transform: rotateX(25deg) translateZ(-2000px);
+  }
+}
+
+/* Grogu / second part highlight */
+.empire-section {
+  margin-top: 600px;
+  color: #ff4444;
+}
+
+/* Optional fade sound trigger */
+.hidden {
+  display: none;
+}
 </style>
 </head>
+
 <body>
 
-<div id="background-space"></div>
+<audio id="empireSound" preload="auto">
+  <source src="https://actions.google.com/sounds/v1/science_fiction/alien_beam.ogg" type="audio/ogg">
+</audio>
 
-<div class="transmission-container">
-    <p>A LONG TIME AGO, IN A GALAXY FAR, FAR AWAY...</p>
-    <p>THE SACRED LEMON has been intercepted during transit to the Free Cocktail Systems. An unknown Imperial faction has disrupted all official channels and erased its trajectory from the archives. The Republic denies any involvement. What remains is chaos… and a single surviving trace.</p>
-    <p>A small Force-sensitive being has left a fragmented transmission: GROGU.</p>
-    <p>“Danger… sacred citrus lost…”<br>
-    “Message hidden at the arrival point of secrets…”<br>
-    “The mailbox holds the first clue…”<br>
-    “Do not delay… the Empire is listening…”</p>
-    <p>Before the signal fades completely, Grogu embedded a security override.</p>
-    <p class="code">ACCESS CODE: CITRON-OVERRIDE</p>
-    <p>Use it to unlock the Imperial pathway and continue the mission. May the Force guide your cocktail.</p>
+<div class="crawl-container">
+  <div class="crawl" id="crawl">
+
+A LONG TIME AGO, IN A GALAXY FAR, FAR AWAY...
+
+THE SACRED LEMON has been intercepted during transit
+to the Free Cocktail Systems.
+
+An unknown Imperial faction has disrupted all official channels
+and erased its trajectory from the archives.
+
+The Republic denies all involvement.
+
+The mission is compromised.
+
+THE SACRED LEMON is lost.
+
+<div class="empire-section" id="empire">
+
+— GROGU TRANSMISSION —
+
+“Danger… sacred citrus lost…”
+
+“Message hidden at the arrival point of secrets…”
+
+“The mailbox holds the first clue…”
+
+“Do not delay… the Empire is listening…”
+
+ACCESS CODE: CITRON-OVERRIDE
+
+</div>
+
+May the Force guide your cocktail.
+
+  </div>
 </div>
 
 <script>
-    // Audio simple au clic
-    document.addEventListener("click", () => {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        // R2D2 Bip
-        const osc = audioCtx.createOscillator();
-        osc.frequency.value = 800;
-        osc.connect(audioCtx.destination);
-        osc.start(); osc.stop(0.2);
+// Trigger Empire sound when Grogu section appears
+const audio = document.getElementById("empireSound");
+const empire = document.getElementById("empire");
 
-        // Synthèse vocale
-        const msg = new SpeechSynthesisUtterance("Danger, sacred citrus lost. Access code: Citron Override.");
-        msg.lang = "en-GB";
-        speechSynthesis.speak(msg);
-    }, {once: true});
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      audio.play();
+    }
+  });
+}, { threshold: 0.6 });
+
+observer.observe(empire);
 </script>
 
 </body>
