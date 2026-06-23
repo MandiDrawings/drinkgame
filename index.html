@@ -1,0 +1,208 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Imperial Transmission</title>
+
+<style>
+body {
+  margin: 0;
+  background: black;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* ===== STAR WARS CRAWL ===== */
+.crawl-container {
+  position: relative;
+  height: 100vh;
+  perspective: 400px;
+  color: #ffe81f;
+  text-align: justify;
+}
+
+.crawl {
+  position: absolute;
+  bottom: -120%;
+  width: 100%;
+  transform-origin: 50% 100%;
+  transform: rotateX(25deg);
+  animation: crawl 45s linear forwards;
+  font-size: 26px;
+  padding: 0 14%;
+  line-height: 1.6;
+}
+
+@keyframes crawl {
+  0% { bottom: -120%; transform: rotateX(25deg); }
+  100% { bottom: 220%; transform: rotateX(25deg) translateZ(-2000px); }
+}
+
+/* GROGU SECTION */
+.empire {
+  margin-top: 650px;
+  color: #ff3b3b;
+  font-weight: bold;
+}
+
+/* VISUAL RADIO EFFECT */
+.glitch {
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="crawl-container">
+  <div class="crawl">
+
+A LONG TIME AGO,
+IN A GALAXY FAR, FAR AWAY...
+
+THE SACRED LEMON has been intercepted during transit
+to the Free Cocktail Systems.
+
+An unknown Imperial faction has erased all navigation data.
+
+The Republic denies involvement.
+
+THE MISSION IS COMPROMISED.
+
+THE SACRED LEMON IS LOST.
+
+<div class="empire" id="grogu">
+— GROGU TRANSMISSION —
+
+“Danger… sacred citrus lost…”
+“Message hidden at the arrival point of secrets…”
+“The mailbox holds the first clue…”
+“Do not delay… the Empire is listening…”
+
+ACCESS CODE: <span style="color:white">CITRON-OVERRIDE</span>
+
+</div>
+
+May the Force guide your cocktail.
+
+  </div>
+</div>
+
+<script>
+
+/* =========================
+   AUDIO ENGINE (MOBILE SAFE)
+========================= */
+
+let audioCtx;
+
+function initAudio(){
+  if(!audioCtx){
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+}
+
+/* ===== R2-D2 BIPS ===== */
+function r2Beep(time = 0){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = "square";
+  osc.frequency.value = 400 + Math.random()*1000;
+
+  gain.gain.value = 0.12;
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start(audioCtx.currentTime + time);
+  osc.stop(audioCtx.currentTime + time + 0.09);
+}
+
+/* ===== RADIO NOISE ===== */
+function startRadioNoise(){
+  const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*2, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+
+  for(let i=0;i<data.length;i++){
+    data[i] = (Math.random()*2-1)*0.02;
+  }
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+  noise.loop = true;
+
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0.06;
+
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 1200;
+  filter.Q.value = 10;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  noise.start();
+}
+
+/* ===== R2-D2 VOICE ===== */
+function playGroguVoice(){
+  const msg = new SpeechSynthesisUtterance();
+
+  msg.text =
+  "Danger. Sacred citrus lost. " +
+  "Message hidden at the arrival point of secrets. " +
+  "The mailbox holds the first clue. " +
+  "Do not delay. The Empire is listening. " +
+  "Access code. Citron Override.";
+
+  msg.lang = "en-GB";
+  msg.rate = 0.78;
+  msg.pitch = 0.35;
+  msg.volume = 1;
+
+  speechSynthesis.speak(msg);
+}
+
+/* ===== FULL SEQUENCE ===== */
+function startTransmission(){
+
+  initAudio();
+
+  startRadioNoise();
+  playGroguVoice();
+
+  // R2-D2 BIP SYNC
+  for(let i=0;i<20;i++){
+    setTimeout(()=>r2Beep(), i*180 + Math.random()*80);
+  }
+
+  document.body.classList.add("glitch");
+}
+
+/* ===== MOBILE NFC AUTOSTART ===== */
+document.addEventListener("click", () => {
+  initAudio();
+  startTransmission();
+}, { once:true });
+
+/* ===== AUTO TRIGGER AFTER CRAWL ===== */
+setTimeout(() => {
+  startTransmission();
+}, 12000);
+
+</script>
+
+</body>
+</html>
+```
