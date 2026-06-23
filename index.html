@@ -1,9 +1,8 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Imperial Transmission</title>
 
 <style>
@@ -12,95 +11,179 @@ body {
   background: black;
   overflow: hidden;
   font-family: Arial, sans-serif;
+  height: 100vh;
 }
 
-/* ===== STAR WARS CRAWL ===== */
+/* 🌌 STAR BACKGROUND */
+#stars {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+/* 🌌 CRAWL */
 .crawl-container {
   position: relative;
   height: 100vh;
-  perspective: 400px;
+  perspective: 300px;
   color: #ffe81f;
-  text-align: justify;
 }
 
 .crawl {
   position: absolute;
-  bottom: -120%;
-  width: 100%;
+  bottom: -180%;
+  width: 100vw;
+  left: 0;
+
   transform-origin: 50% 100%;
-  transform: rotateX(25deg);
-  animation: crawl 45s linear forwards;
-  font-size: 26px;
-  padding: 0 14%;
-  line-height: 1.6;
+  transform: rotateX(35deg);
+  animation: crawl 55s linear forwards;
+
+  font-size: 50px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  padding: 0 10vw;
+  line-height: 1.9;
 }
 
 @keyframes crawl {
-  0% { bottom: -120%; transform: rotateX(25deg); }
-  100% { bottom: 220%; transform: rotateX(25deg) translateZ(-2000px); }
+  0% { bottom: -180%; }
+  100% { bottom: 220%; transform: rotateX(35deg) translateZ(-2000px); }
 }
 
-/* GROGU SECTION */
-.empire {
-  margin-top: 650px;
-  color: #ff3b3b;
-  font-weight: bold;
-}
-
-/* VISUAL RADIO EFFECT */
+/* 📡 GLITCH */
 .glitch {
-  animation: flicker 0.15s infinite;
+  animation: glitch 0.12s infinite;
 }
 
-@keyframes flicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+@keyframes glitch {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(2px,-1px); }
+  50% { transform: translate(-2px,1px); }
+  75% { transform: translate(1px,2px); }
+  100% { transform: translate(0,0); }
+}
+
+/* 🔴 EMPIRE FLASH */
+.red-flash {
+  animation: redFlash 0.4s ease;
+}
+
+@keyframes redFlash {
+  0% { background: rgba(0,0,0,0); }
+  50% { background: rgba(255,0,0,0.4); }
+  100% { background: rgba(0,0,0,0); }
+}
+
+/* 💀 FAIL OVERLAY */
+.empire-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  color: red;
+  font-size: 36px;
+  font-weight: 900;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 9999;
 }
 </style>
 </head>
 
 <body>
 
+<canvas id="stars"></canvas>
+
 <div class="crawl-container">
   <div class="crawl">
 
-A LONG TIME AGO,
-IN A GALAXY FAR, FAR AWAY...
+A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
-THE SACRED LEMON has been intercepted during transit
-to the Free Cocktail Systems.
+THE SACRED LEMON HAS BEEN INTERCEPTED.
 
-An unknown Imperial faction has erased all navigation data.
-
-The Republic denies involvement.
+An Imperial faction has erased all navigation data.
 
 THE MISSION IS COMPROMISED.
 
 THE SACRED LEMON IS LOST.
 
-<div class="empire" id="grogu">
 — GROGU TRANSMISSION —
 
 “Danger… sacred citrus lost…”
-“Message hidden at the arrival point of secrets…”
 “The mailbox holds the first clue…”
 “Do not delay… the Empire is listening…”
 
-ACCESS CODE: <span style="color:white">CITRON-OVERRIDE</span>
-
-</div>
-
-May the Force guide your cocktail.
+ACCESS CODE: CITRON-OVERRIDE
 
   </div>
 </div>
 
+<div id="empireOverlay" class="empire-overlay">
+IMPERIAL DETECTION SYSTEM<br><br>
+TRANSMISSION COMPROMISED<br><br>
+REINITIALIZING MISSION...
+</div>
+
 <script>
 
-/* =========================
-   AUDIO ENGINE (MOBILE SAFE)
-========================= */
+/* =====================
+   STARS SYSTEM
+===================== */
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+const stars = [];
+let warpSpeed = 2;
+
+for(let i=0;i<250;i++){
+  stars.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    z: Math.random()*canvas.width
+  });
+}
+
+function draw(){
+  ctx.fillStyle = "black";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  for(let s of stars){
+    s.z -= warpSpeed;
+
+    if(s.z <= 0){
+      s.x = Math.random()*canvas.width;
+      s.y = Math.random()*canvas.height;
+      s.z = canvas.width;
+    }
+
+    let k = 128 / s.z;
+    let px = s.x * k + canvas.width/2;
+    let py = s.y * k + canvas.height/2;
+
+    if(px>0 && px<canvas.width && py>0 && py<canvas.height){
+      let size = (1 - s.z/canvas.width) * 2;
+      ctx.fillStyle = "white";
+      ctx.fillRect(px, py, size, size);
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* =====================
+   AUDIO ENGINE
+===================== */
 
 let audioCtx;
 
@@ -110,30 +193,13 @@ function initAudio(){
   }
 }
 
-/* ===== R2-D2 BIPS ===== */
-function r2Beep(time = 0){
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-
-  osc.type = "square";
-  osc.frequency.value = 400 + Math.random()*1000;
-
-  gain.gain.value = 0.12;
-
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
-
-  osc.start(audioCtx.currentTime + time);
-  osc.stop(audioCtx.currentTime + time + 0.09);
-}
-
-/* ===== RADIO NOISE ===== */
+/* RADIO NOISE */
 function startRadioNoise(){
-  const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*2, audioCtx.sampleRate);
+  const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*3, audioCtx.sampleRate);
   const data = buffer.getChannelData(0);
 
   for(let i=0;i<data.length;i++){
-    data[i] = (Math.random()*2-1)*0.02;
+    data[i] = (Math.random()*2-1)*0.08;
   }
 
   const noise = audioCtx.createBufferSource();
@@ -141,11 +207,11 @@ function startRadioNoise(){
   noise.loop = true;
 
   const gain = audioCtx.createGain();
-  gain.gain.value = 0.06;
+  gain.gain.value = 0.18;
 
   const filter = audioCtx.createBiquadFilter();
   filter.type = "bandpass";
-  filter.frequency.value = 1200;
+  filter.frequency.value = 900;
   filter.Q.value = 10;
 
   noise.connect(filter);
@@ -155,54 +221,141 @@ function startRadioNoise(){
   noise.start();
 }
 
-/* ===== R2-D2 VOICE ===== */
+/* R2-D2 BIP */
+function r2Beep(){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.type = "square";
+  osc.frequency.value = 300 + Math.random()*1000;
+
+  gain.gain.value = 0.2;
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.1);
+}
+
+/* VOICE */
 function playGroguVoice(){
   const msg = new SpeechSynthesisUtterance();
 
   msg.text =
   "Danger. Sacred citrus lost. " +
-  "Message hidden at the arrival point of secrets. " +
   "The mailbox holds the first clue. " +
   "Do not delay. The Empire is listening. " +
-  "Access code. Citron Override.";
+  "Access code Citron Override.";
 
   msg.lang = "en-GB";
-  msg.rate = 0.78;
-  msg.pitch = 0.35;
+  msg.rate = 0.72;
+  msg.pitch = 0.25;
   msg.volume = 1;
 
   speechSynthesis.speak(msg);
 }
 
-/* ===== FULL SEQUENCE ===== */
+/* =====================
+   EFFECTS
+===================== */
+
+function activateWarp(){
+  warpSpeed = 25;
+  setTimeout(()=>warpSpeed=2, 2500);
+}
+
+function empireFlash(){
+  document.body.classList.add("red-flash");
+  setTimeout(()=>document.body.classList.remove("red-flash"), 400);
+}
+
+function startGlitch(){
+  document.body.classList.add("glitch");
+  setTimeout(()=>document.body.classList.remove("glitch"), 3000);
+}
+
+function vibrateSignal(){
+  if(navigator.vibrate){
+    navigator.vibrate([200,100,200,100,500]);
+  }
+}
+
+/* =====================
+   FAIL STATE
+===================== */
+
+let failTimer;
+let failActive = false;
+
+function triggerFailState(){
+  failActive = true;
+
+  document.getElementById("empireOverlay").style.display = "flex";
+
+  speechSynthesis.cancel();
+
+  if(navigator.vibrate){
+    navigator.vibrate([300,200,300,200,800]);
+  }
+
+  setTimeout(()=>{
+    document.getElementById("empireOverlay").style.display = "none";
+    failActive = false;
+    restartScene();
+  },4000);
+}
+
+function restartScene(){
+  warpSpeed = 2;
+  speechSynthesis.cancel();
+  startFailTimer();
+}
+
+function startFailTimer(){
+  clearTimeout(failTimer);
+  failTimer = setTimeout(triggerFailState, 20000);
+}
+
+/* =====================
+   MAIN SEQUENCE
+===================== */
+
 function startTransmission(){
 
   initAudio();
+  audioCtx.resume();
 
   startRadioNoise();
   playGroguVoice();
 
-  // R2-D2 BIP SYNC
-  for(let i=0;i<20;i++){
-    setTimeout(()=>r2Beep(), i*180 + Math.random()*80);
+  activateWarp();
+  startGlitch();
+  vibrateSignal();
+
+  for(let i=0;i<22;i++){
+    setTimeout(()=>r2Beep(), i*140);
   }
 
-  document.body.classList.add("glitch");
+  setTimeout(()=>empireFlash(), 5000);
 }
 
-/* ===== MOBILE NFC AUTOSTART ===== */
-document.addEventListener("click", () => {
+/* =====================
+   START (mobile safe)
+===================== */
+
+document.addEventListener("click", ()=>{
   initAudio();
   startTransmission();
-}, { once:true });
+  startFailTimer();
+},{once:true});
 
-/* ===== AUTO TRIGGER AFTER CRAWL ===== */
-setTimeout(() => {
+setTimeout(()=>{
   startTransmission();
-}, 12000);
+  startFailTimer();
+},12000);
 
 </script>
 
 </body>
 </html>
-```
