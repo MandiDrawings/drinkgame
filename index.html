@@ -13,38 +13,38 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* 🌌 STARFIELD */
-#stars {
+/* 🌌 STARFIELD “WARP” (style début) */
+canvas {
   position: fixed;
   inset: 0;
-  z-index: -1;
   background: black;
 }
 
-/* 🎬 CONTAINER */
+/* 🎬 STAR WARS CRAWL (STYLE ORIGINAL) */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 380px;
+  perspective: 320px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
 }
 
-/* 🎬 CRAWL + FADE CONTROLÉ */
 .crawl {
   position: absolute;
 
-  width: 88vw;
-  max-width: 620px;
+  width: 90vw;
+  max-width: 650px;
 
-  bottom: -90%;
+  bottom: -150%;
 
   transform-origin: 50% 100%;
-  transform: rotateX(45deg);
+  transform: rotateX(40deg);
 
-  font-size: 6.3vw;
+  animation: crawl 65s linear forwards;
+
+  font-size: 6vw;
   font-weight: 900;
   letter-spacing: 1.6px;
   line-height: 2;
@@ -56,34 +56,16 @@ body {
 
   text-shadow:
     0 0 10px rgba(255,232,31,0.6),
-    0 0 20px rgba(255,232,31,0.25);
-
-  /* ⛔ invisible au début */
-  opacity: 0;
-
-  /* 🎬 fade + crawl séparés */
-  animation:
-    fadeIn 2s ease forwards,
-    crawl 62s linear 2s forwards;
+    0 0 20px rgba(255,232,31,0.3);
 }
 
-/* 🎬 apparition style “activation transmission” */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* 🎬 crawl propre lisible */
+/* 🎬 DÉFILEMENT PROPRE */
 @keyframes crawl {
-  0% {
-    transform: rotateX(45deg) translateY(25%);
-  }
-  100% {
-    transform: rotateX(45deg) translateY(-310%);
-  }
+  0% { transform: rotateX(40deg) translateY(30%); }
+  100% { transform: rotateX(40deg) translateY(-320%); }
 }
 
-/* 🌌 vignette cinéma */
+/* 🌌 VIGNETTE CINÉMA */
 body::before {
   content: "";
   position: fixed;
@@ -91,7 +73,7 @@ body::before {
   background: radial-gradient(
     ellipse at center,
     transparent 0%,
-    rgba(0,0,0,0.55) 65%,
+    rgba(0,0,0,0.55) 60%,
     black 100%
   );
   pointer-events: none;
@@ -110,9 +92,7 @@ A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
 THIS IS AN ACTIVE IMPERIAL TRANSMISSION.
 
-A COMPROMISED SIGNAL HAS BEEN DETECTED.
-
-THE SACRED LEMON HAS BEEN INTERCEPTED.
+THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
 
 ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
@@ -120,15 +100,11 @@ ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
 GROGU TRANSMISSION
 
-YOU HAVE ACTIVATED A SECURE IMPERIAL RELAY NODE.
+YOU HAVE ACTIVATED A COMPROMISED RELAY NODE.
 
 THIS IS NOT A SEARCH LOCATION.
 
 THIS IS A LIVE BROADCAST.
-
-THE MESSAGE WAS DELIVERED DIRECTLY TO YOU.
-
-YOUR MISSION HAS ALREADY BEGUN.
 
 THE EMPIRE IS LISTENING.
 
@@ -144,20 +120,21 @@ CITRON-OVERRIDE
 
 <script>
 
-/* 🌌 STARFIELD */
+/* 🌌 STARFIELD WARP (VERSION DÉBUT) */
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
-function resize(){
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener("resize", ()=>{
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
+});
 
 const stars = [];
 
-for(let i=0;i<260;i++){
+for(let i=0;i<300;i++){
   stars.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
@@ -171,7 +148,7 @@ function draw(){
 
   for(let s of stars){
 
-    s.z -= 1.3;
+    s.z -= 1.6;
 
     if(s.z <= 0){
       s.x = Math.random()*canvas.width;
@@ -179,15 +156,13 @@ function draw(){
       s.z = canvas.width;
     }
 
-    const k = 210 / s.z;
+    const k = 200 / s.z;
 
     const px = (s.x - canvas.width/2) * k + canvas.width/2;
     const py = (s.y - canvas.height/2) * k + canvas.height/2;
 
     if(px>0 && px<canvas.width && py>0 && py<canvas.height){
-
-      const size = 2 * (1 - s.z / canvas.width);
-
+      const size = 2;
       ctx.fillStyle = "white";
       ctx.fillRect(px, py, size, size);
     }
@@ -195,6 +170,7 @@ function draw(){
 
   requestAnimationFrame(draw);
 }
+
 draw();
 
 </script>
