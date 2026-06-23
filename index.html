@@ -1,60 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Imperial Transmission</title>
+<title>Imperial Transmission - Compromised</title>
 
 <style>
 body {
   margin: 0;
-  background: black;
+  background: #050505;
   overflow: hidden;
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   touch-action: manipulation;
-}
-
-/* 🌌 STARFIELD */
-#stars {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(circle at center, #05060a 0%, black 70%);
-}
-
-/* 🎬 CRAWL MOBILE */
-.crawl-container {
-  position: relative;
-  height: 100vh;
-  perspective: 280px;
-  display: flex;
-  justify-content: center;
   color: #ffe81f;
 }
 
+/* 📺 EFFET SCANLINE & CRT */
+body::before {
+  content: " ";
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 3px 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* HUD DÉCORATIF */
+.hud {
+  position: fixed;
+  top: 0; left: 0; width: 100%; padding: 15px;
+  font-size: 12px; color: #00ff41; z-index: 5;
+  display: flex; justify-content: space-between;
+}
+
+/* 🌌 STARFIELD */
+#stars { position: fixed; inset: 0; z-index: -1; }
+
+/* 🎬 CRAWL */
+.crawl-container {
+  position: relative; height: 100vh; perspective: 280px;
+  display: flex; justify-content: center;
+}
+
 .crawl {
-  position: absolute;
-  bottom: -220%;
-  width: 100%;
-
-  transform-origin: 50% 100%;
-  transform: rotateX(38deg);
-
+  position: absolute; bottom: -220%; width: 100%;
+  transform-origin: 50% 100%; transform: rotateX(38deg);
   animation: crawl 65s linear forwards;
+  font-size: 7vw; font-weight: 900;
+  text-transform: uppercase; padding: 0 6vw;
+  line-height: 1.5; text-align: justify;
+  text-shadow: 0 0 10px #ff0000;
+}
 
-  font-size: 8vw;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-
-  padding: 0 6vw;
-  line-height: 1.9;
-
-  text-align: justify;
-
-  text-shadow:
-    0 0 10px rgba(255,232,31,0.5),
-    0 0 20px rgba(255,232,31,0.2);
+/* 👾 ANIMATIONS GLITCH */
+.glitch { animation: glitch 0.2s infinite; }
+@keyframes glitch {
+  0% { transform: skew(0deg); opacity: 1; }
+  25% { transform: skew(-2deg); opacity: 0.9; }
+  50% { transform: skew(2deg); opacity: 1; }
+  75% { transform: skew(-1deg); opacity: 0.95; }
 }
 
 @keyframes crawl {
@@ -62,281 +68,68 @@ body {
   100% { transform: rotateX(38deg) translateY(-280%); }
 }
 
-/* 📡 GLITCH */
-.glitch {
-  animation: glitch 0.12s infinite;
-}
-
-@keyframes glitch {
-  0% { transform: translate(0,0); }
-  25% { transform: translate(2px,-1px); }
-  50% { transform: translate(-2px,1px); }
-  75% { transform: translate(1px,2px); }
-  100% { transform: translate(0,0); }
-}
-
-/* 🔴 FLASH */
-.flash {
-  animation: flash 0.4s ease;
-}
-
+.flash { animation: flash 0.4s ease; }
 @keyframes flash {
-  0% { background: rgba(0,0,0,0); }
-  50% { background: rgba(255,0,0,0.35); }
-  100% { background: rgba(0,0,0,0); }
+  50% { background: rgba(255,0,0,0.2); }
 }
 </style>
 </head>
-
 <body>
+
+<div class="hud">
+  <div>ID_NODE: 77-B / STATUS: CORRUPTED</div>
+  <div>SIGNAL: DECRYPTING... [###--]</div>
+</div>
 
 <canvas id="stars"></canvas>
 
 <div class="crawl-container">
-  <div class="crawl">
-
-A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
-
-THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
-
-ALL NAVIGATION RECORDS HAVE BEEN ERASED.
-
-THIS IS AN INTERCEPTED TRANSMISSION.
-
-—
-
-GROGU TRANSMISSION
-
-DANGER. SACRED CITRUS LOST.
-
-THE SIGNAL HAS BEEN COMPROMISED.
-
-THE EMPIRE IS LISTENING.
-
-DO NOT DELAY.
-
-—
-
-ACCESS CODE:
-CITRON-OVERRIDE
-
+  <div class="crawl glitch">
+    ALERT: SACRED LEMON INTERCEPTED.<br><br>
+    IMPERIAL RELAY NODE COMPROMISED.<br><br>
+    DO NOT TRUST THE TRANSMISSION.<br><br>
+    ACCESS CODE: CITRON-OVERRIDE
   </div>
 </div>
 
 <script>
-
-/* =========================
-   🌌 STARFIELD
-========================= */
-
+// --- Starfield ---
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
+let w, h;
+function resize(){ w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+window.addEventListener("resize", resize); resize();
 
-function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-const layers = [
-  { count: 100, speed: 0.5, size: 0.8, alpha: 0.3 },
-  { count: 160, speed: 1.2, size: 1.5, alpha: 0.6 },
-  { count: 120, speed: 2.0, size: 2.2, alpha: 1.0 }
-];
-
-const stars = [];
-
-layers.forEach(layer => {
-  for(let i=0;i<layer.count;i++){
-    stars.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      z: Math.random()*canvas.width,
-      layer
-    });
-  }
-});
-
+const stars = Array.from({length: 200}, () => ({x: Math.random()*w, y: Math.random()*h, z: Math.random()*w}));
 function draw(){
-  ctx.fillStyle = "black";
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-
+  ctx.fillStyle = "black"; ctx.fillRect(0,0,w,h);
   for(let s of stars){
-
-    s.z -= s.layer.speed;
-
-    if(s.z <= 0){
-      s.x = Math.random()*canvas.width;
-      s.y = Math.random()*canvas.height;
-      s.z = canvas.width;
-    }
-
-    const k = 220 / s.z;
-    const px = (s.x - canvas.width/2) * k + canvas.width/2;
-    const py = (s.y - canvas.height/2) * k + canvas.height/2;
-
-    if(px > 0 && px < canvas.width && py > 0 && py < canvas.height){
-
-      const size = s.layer.size * (1 - s.z / canvas.width);
-
-      ctx.fillStyle = `rgba(255,255,255,${s.layer.alpha})`;
-      ctx.fillRect(px, py, size, size);
-    }
+    s.z -= 2;
+    if(s.z <= 0){ s.x = Math.random()*w; s.y = Math.random()*h; s.z = w; }
+    const k = 100/s.z;
+    ctx.fillStyle = "white";
+    ctx.fillRect((s.x-w/2)*k+w/2, (s.y-h/2)*k+h/2, 1, 1);
   }
-
   requestAnimationFrame(draw);
 }
 draw();
 
-/* =========================
-   🔊 AUDIO ENGINE
-========================= */
-
+// --- Audio & Voix ---
 let audioCtx;
-let musicStarted = false;
-let masterGain;
+function initAudio(){ if(!audioCtx) audioCtx = new AudioContext(); audioCtx.resume(); }
 
-function initAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+function voice(text, pitch=0.2){
+  const msg = new SpeechSynthesisUtterance(text);
+  msg.lang = "en-GB"; msg.pitch = pitch; msg.rate = 0.6;
+  speechSynthesis.speak(msg);
 }
 
-function beep(){
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-
-  o.type = "square";
-  o.frequency.value = 400 + Math.random()*800;
-
-  g.gain.value = 0.12;
-
-  o.connect(g);
-  g.connect(audioCtx.destination);
-
-  o.start();
-  o.stop(audioCtx.currentTime + 0.08);
-}
-
-/* 🎼 STAR WARS STYLE MUSIC */
-function startMusic(){
-
-  if(musicStarted) return;
-  musicStarted = true;
-
-  masterGain = audioCtx.createGain();
-  masterGain.gain.value = 0;
-
-  masterGain.connect(audioCtx.destination);
-
-  const osc1 = audioCtx.createOscillator();
-  osc1.type = "sawtooth";
-  osc1.frequency.value = 55;
-
-  const g1 = audioCtx.createGain();
-  g1.gain.value = 0.08;
-
-  osc1.connect(g1);
-  g1.connect(masterGain);
-  osc1.start();
-
-  const osc2 = audioCtx.createOscillator();
-  osc2.type = "triangle";
-  osc2.frequency.value = 110;
-
-  const g2 = audioCtx.createGain();
-  g2.gain.value = 0.05;
-
-  osc2.connect(g2);
-  g2.connect(masterGain);
-  osc2.start();
-
-  masterGain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 12);
-}
-
-/* 🎤 SYNCHRONISED VOICE */
-const lines = [
-  "Danger.",
-  "Sacred citrus lost.",
-  "The signal has been compromised.",
-  "The Empire is listening.",
-  "Do not delay.",
-  "Access code Citron Override."
-];
-
-function playVoice(){
-
-  let t = 0;
-
-  lines.forEach((line,i)=>{
-
-    setTimeout(()=>{
-
-      const msg = new SpeechSynthesisUtterance(line);
-      msg.lang = "en-GB";
-      msg.rate = 0.72;
-      msg.pitch = 0.25;
-
-      speechSynthesis.speak(msg);
-
-      beep();
-
-      if(i === 2 || i === 3){
-        document.body.classList.add("flash");
-        setTimeout(()=>document.body.classList.remove("flash"),400);
-      }
-
-      if(i === 5){
-        if(navigator.vibrate){
-          navigator.vibrate([150,100,300]);
-        }
-      }
-
-    }, t);
-
-    t += (i < 2 ? 1400 : 1200);
-  });
-}
-
-/* =========================
-   🚀 START SEQUENCE
-========================= */
-
-function start(){
-
+document.addEventListener("click", () => {
   initAudio();
-  audioCtx.resume();
-
-  // étoiles immédiates
-  for(let i=0;i<5;i++){
-    setTimeout(beep,i*200);
-  }
-
-  // 🎼 musique progressive
-  setTimeout(()=>{
-    startMusic();
-  },1500);
-
-  // 🎤 voix plus tard (cinéma)
-  setTimeout(()=>{
-    playVoice();
-  },8500);
-}
-
-/* =========================
-   📱 NFC / MOBILE TRIGGER
-========================= */
-
-document.addEventListener("click",()=>{
-  start();
-},{once:true});
-
-setTimeout(()=>{
-  start();
-},12000);
-
+  document.body.classList.add("flash");
+  voice("Imperial node compromised. Access code Citron Override.", 0.1);
+  setTimeout(()=>document.body.classList.remove("flash"), 1000);
+}, {once: true});
 </script>
-
 </body>
 </html>
