@@ -20,25 +20,25 @@ canvas {
   background: black;
 }
 
-/* 🎬 zone Star Wars */
+/* 🎬 zone crawl */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 420px;
+  perspective: 400px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
 }
 
-/* 🎬 CRAWL STAR WARS RÉEL */
+/* 🎬 STAR WARS CRAWL COMPLET */
 .crawl {
   position: absolute;
 
   width: 85vw;
   max-width: 650px;
 
-  bottom: -160%;
+  bottom: -180%;
 
   transform-origin: 50% 100%;
   transform: rotateX(45deg);
@@ -57,18 +57,12 @@ canvas {
     0 0 10px rgba(255,232,31,0.6),
     0 0 20px rgba(255,232,31,0.3);
 
-  animation: crawl 70s linear forwards;
+  animation: crawl 72s linear forwards;
 }
 
-/* 🎬 IMPORTANT : arrivée progressive (Star Wars réel) */
 @keyframes crawl {
-  0% {
-    transform: rotateX(45deg) translateY(100%);
-  }
-
-  100% {
-    transform: rotateX(45deg) translateY(-320%);
-  }
+  0% { transform: rotateX(45deg) translateY(100%); }
+  100% { transform: rotateX(45deg) translateY(-320%); }
 }
 </style>
 </head>
@@ -78,26 +72,43 @@ canvas {
 <canvas id="stars"></canvas>
 
 <div class="crawl-container">
-  <div class="crawl" id="text">
+  <div class="crawl">
 
 A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
-IMPERIAL TRANSMISSION DETECTED.
+THIS IS AN ACTIVE IMPERIAL TRANSMISSION.
 
-THE SACRED LEMON HAS BEEN INTERCEPTED.
+A COMPROMISED SIGNAL HAS BEEN DETECTED.
 
-THIS SIGNAL IS NOT AUTHORIZED.
+THE SACRED LEMON HAS BEEN INTERCEPTED BY AN UNKNOWN FACTION.
+
+ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
 THE EMPIRE IS LISTENING.
 
-ACCESS CODE: CITRON-OVERRIDE
+—
+
+GROGU TRANSMISSION
+
+YOU ARE ADVISED TO FOLLOW THE SIGNAL PATH.
+
+THE FIRST CLUE IS CONTAINED IN THE MAILBOX NODE.
+
+THIS IS NOT A RANDOM MESSAGE.
+
+THIS IS A CONTROLLED INTERCEPTION.
+
+—
+
+ACCESS CODE:
+CITRON-OVERRIDE
 
   </div>
 </div>
 
 <script>
 
-/* 🌌 STARFIELD */
+/* 🌌 étoiles */
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -138,33 +149,35 @@ function draw(){
 
 draw();
 
-/* 🎧 VOIX R2-D2 SIMULÉE */
+/* 🎧 R2-D2 SIMPLE AUDIO */
 function r2d2(){
-  const ctxA = new (window.AudioContext || window.webkitAudioContext)();
 
-  function beep(freq, time){
-    const osc = ctxA.createOscillator();
-    const gain = ctxA.createGain();
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  const ctxAudio = new AudioContext();
+
+  function beep(freq, t){
+    const osc = ctxAudio.createOscillator();
+    const gain = ctxAudio.createGain();
 
     osc.type = "square";
     osc.frequency.value = freq;
 
-    gain.gain.value = 0.05;
+    gain.gain.value = 0.06;
 
     osc.connect(gain);
-    gain.connect(ctxA.destination);
+    gain.connect(ctxAudio.destination);
 
     osc.start();
-    osc.stop(ctxA.currentTime + time);
+    osc.stop(ctxAudio.currentTime + t);
   }
 
-  setTimeout(()=>beep(600,0.1), 2000);
-  setTimeout(()=>beep(900,0.1), 2200);
-  setTimeout(()=>beep(400,0.15), 2500);
-  setTimeout(()=>beep(750,0.1), 2800);
+  setTimeout(()=>beep(600,0.12), 1500);
+  setTimeout(()=>beep(900,0.10), 1800);
+  setTimeout(()=>beep(500,0.15), 2200);
+  setTimeout(()=>beep(750,0.12), 2600);
 }
 
-/* 📡 activation audio */
+/* ▶ activation audio */
 document.addEventListener("click", ()=>{
   r2d2();
 }, {once:true});
