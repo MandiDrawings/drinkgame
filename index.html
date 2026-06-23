@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Imperial Transmission</title>
 
 <style>
@@ -12,68 +13,96 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Container perspective */
-.crawl-container {
-  position: relative;
-  height: 100vh;
-  perspective: 400px;
-  color: #ffe81f;
-  text-align: justify;
+/* 🌌 STARFIELD */
+canvas {
+  position: fixed;
+  inset: 0;
+  background: black;
 }
 
-/* Crawl animation */
+/* 🎬 CRAWL CONTAINER */
+.crawl-container {
+  position: fixed;
+  inset: 0;
+  perspective: 250px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+/* 🎬 STAR WARS CINEMA CRAWL */
 .crawl {
   position: absolute;
-  bottom: -100%;
+  bottom: -120%;
+
   width: 100%;
+  padding: 0 18%;
+
   transform-origin: 50% 100%;
-  transform: rotateX(25deg);
-  animation: crawl 45s linear forwards;
-  font-size: 28px;
-  padding: 0 15%;
-  line-height: 1.6;
+
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.8;
+  letter-spacing: 2px;
+
+  text-transform: uppercase;
+  text-align: justify;
+
+  color: #ffe81f;
+
+  text-shadow:
+    0 0 12px rgba(255,232,31,0.7),
+    0 0 25px rgba(255,232,31,0.35);
+
+  animation: crawl 65s linear forwards;
 }
 
+/* 🎬 vrai effet profondeur Star Wars */
 @keyframes crawl {
   0% {
-    bottom: -100%;
-    transform: rotateX(25deg) translateZ(0);
+    transform: rotateX(28deg) translateY(100%);
   }
+
   100% {
-    bottom: 200%;
-    transform: rotateX(25deg) translateZ(-2000px);
+    transform: rotateX(28deg) translateY(-360%);
   }
 }
 
-/* Grogu / second part highlight */
-.empire-section {
-  margin-top: 600px;
-  color: #ff4444;
+/* GROGU / EMPIRE */
+.empire {
+  margin-top: 80px;
+  color: #ff3b3b;
+  font-weight: bold;
+  font-size: 34px;
+  text-align: center;
 }
 
-/* Optional fade sound trigger */
-.hidden {
-  display: none;
+/* petit effet transmission */
+.glitch {
+  animation: flicker 0.12s infinite;
+}
+
+@keyframes flicker {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
 }
 </style>
 </head>
 
 <body>
 
-<audio id="empireSound" preload="auto">
-  <source src="https://actions.google.com/sounds/v1/science_fiction/alien_beam.ogg" type="audio/ogg">
-</audio>
+<canvas id="stars"></canvas>
 
 <div class="crawl-container">
-  <div class="crawl" id="crawl">
+  <div class="crawl">
 
 A LONG TIME AGO, IN A GALAXY FAR, FAR AWAY...
 
-THE SACRED LEMON has been intercepted during transit
-to the Free Cocktail Systems.
+THE SACRED LEMON has been intercepted during transit to the Free Cocktail Systems.
 
-An unknown Imperial faction has disrupted all official channels
-and erased its trajectory from the archives.
+An unknown Imperial faction has disrupted all official channels and erased its trajectory from the archives.
 
 The Republic denies all involvement.
 
@@ -81,19 +110,16 @@ The mission is compromised.
 
 THE SACRED LEMON is lost.
 
-<div class="empire-section" id="empire">
+<div class="empire">
 
 — GROGU TRANSMISSION —
 
 “Danger… sacred citrus lost…”
-
 “Message hidden at the arrival point of secrets…”
-
 “The mailbox holds the first clue…”
-
 “Do not delay… the Empire is listening…”
 
-ACCESS CODE: CITRON-OVERRIDE
+ACCESS CODE: <span style="color:white">CITRON-OVERRIDE</span>
 
 </div>
 
@@ -103,19 +129,48 @@ May the Force guide your cocktail.
 </div>
 
 <script>
-// Trigger Empire sound when Grogu section appears
-const audio = document.getElementById("empireSound");
-const empire = document.getElementById("empire");
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      audio.play();
-    }
+/* 🌌 STARFIELD */
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+const stars = [];
+
+for (let i = 0; i < 260; i++) {
+  stars.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height
   });
-}, { threshold: 0.6 });
+}
 
-observer.observe(empire);
+function draw() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+
+  for (let s of stars) {
+    s.y += 0.5;
+    if (s.y > canvas.height) {
+      s.y = 0;
+      s.x = Math.random() * canvas.width;
+    }
+    ctx.fillRect(s.x, s.y, 2, 2);
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
 </script>
 
 </body>
