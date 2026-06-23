@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Imperial Transmission</title>
+<title>Imperial Transmission — ARG à boire</title>
 
 <style>
 body {
@@ -13,84 +13,98 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* 🌌 STARFIELD */
 canvas {
   position: fixed;
   inset: 0;
   background: black;
 }
 
-/* 🎬 CRAWL CONTAINER */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 250px;
+  perspective: 400px;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
-/* 🎬 STAR WARS CINEMA CRAWL */
 .crawl {
   position: absolute;
   bottom: -120%;
-
   width: 100%;
-  padding: 0 18%;
-
+  padding: 0 12%;
   transform-origin: 50% 100%;
-
-  font-size: 44px;
+  font-size: clamp(28px, 4.5vw, 70px);
   font-weight: 900;
-  line-height: 1.8;
-  letter-spacing: 2px;
-
+  line-height: 1.9;
+  letter-spacing: 3px;
   text-transform: uppercase;
   text-align: justify;
-
   color: #ffe81f;
-
   text-shadow:
     0 0 12px rgba(255,232,31,0.7),
     0 0 25px rgba(255,232,31,0.35);
-
-  animation: crawl 65s linear forwards;
+  animation: crawl 70s linear forwards;
 }
 
-/* 🎬 vrai effet profondeur Star Wars */
 @keyframes crawl {
   0% {
-    transform: rotateX(28deg) translateY(100%);
+    transform: rotateX(24deg) translateY(100%);
   }
-
   100% {
-    transform: rotateX(28deg) translateY(-360%);
+    transform: rotateX(24deg) translateY(-360%);
   }
 }
 
-/* GROGU / EMPIRE */
+@media (max-width: 600px) {
+  .crawl-container {
+    perspective: 300px;
+  }
+  .crawl {
+    padding: 0 6%;
+    font-size: clamp(22px, 5vw, 36px);
+    line-height: 1.7;
+    letter-spacing: 1px;
+    animation: crawl 60s linear forwards;
+  }
+  @keyframes crawl {
+    0% {
+      transform: rotateX(18deg) translateY(80%);
+    }
+    100% {
+      transform: rotateX(18deg) translateY(-360%);
+    }
+  }
+  .empire {
+    font-size: 20px;
+  }
+}
+
 .empire {
-  margin-top: 80px;
+  margin-top: 60px;
   color: #ff3b3b;
   font-weight: bold;
-  font-size: 34px;
+  font-size: clamp(22px, 3vw, 48px);
   text-align: center;
 }
 
-/* petit effet transmission */
+.access-code {
+  color: #ffffff;
+  letter-spacing: 4px;
+}
+
 .glitch {
   animation: flicker 0.12s infinite;
 }
 
 @keyframes flicker {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
+  0%   { opacity: 1; }
+  50%  { opacity: 0.6; }
   100% { opacity: 1; }
 }
 </style>
 </head>
-
 <body>
 
 <canvas id="stars"></canvas>
@@ -116,10 +130,9 @@ THE SACRED LEMON is lost.
 
 “Danger… sacred citrus lost…”
 “Message hidden at the arrival point of secrets…”
-“The mailbox holds the first clue…”
 “Do not delay… the Empire is listening…”
 
-ACCESS CODE: <span style="color:white">CITRON-OVERRIDE</span>
+ACCESS CODE: <span class="access-code">CITRON-OVERRIDE</span>
 
 </div>
 
@@ -129,8 +142,6 @@ May the Force guide your cocktail.
 </div>
 
 <script>
-
-/* 🌌 STARFIELD */
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -154,7 +165,6 @@ for (let i = 0; i < 260; i++) {
 function draw() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   ctx.fillStyle = "white";
 
   for (let s of stars) {
@@ -171,6 +181,124 @@ function draw() {
 
 draw();
 
+/* Audio context — unlock on every call */
+let audioCtx;
+let audioUnlocked = false;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
+
+/* Retry unlock every 3s in case browser blocks autoplay */
+setInterval(() => {
+  if (!audioUnlocked) getAudioCtx();
+}, 3000);
+
+/* R2D2 beep */
+function beep(freq, dur, delay, vol) {
+  try {
+    const c = getAudioCtx();
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    const start = c.currentTime + delay;
+    gain.gain.setValueAtTime(vol || 0.25, start);
+    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start(start);
+    osc.stop(start + dur + 0.02);
+  } catch (e) { /* silent */ }
+}
+
+function playR2D2Beeps() {
+  const notes = [
+    { f: 800, d: 0.08, t: 0 },
+    { f: 1100, d: 0.08, t: 0.12 },
+    { f: 900, d: 0.06, t: 0.24 },
+    { f: 1300, d: 0.15, t: 0.34 },
+    { f: 600, d: 0.1, t: 0.55 },
+    { f: 1000, d: 0.12, t: 0.7 },
+  ];
+  notes.forEach(n => beep(n.f, n.d, n.t, 0.2));
+  audioUnlocked = true;
+}
+
+/* Droid speech synthesis */
+function droidSpeak(text, onWord) {
+  const u = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+  const droidVoice = voices.find(v =>
+    /zira|david|microsoft/i.test(v.name) && v.lang.startsWith("en")
+  );
+  if (droidVoice) u.voice = droidVoice;
+  u.lang = "en-US";
+  u.pitch = 2.5;
+  u.rate = 1.7;
+  u.volume = 1;
+
+  if (onWord) {
+    let wordIndex = 0;
+    u.onboundary = (e) => {
+      if (e.name === "word") {
+        onWord(wordIndex);
+        wordIndex++;
+      }
+    };
+  }
+
+  speechSynthesis.speak(u);
+  return u;
+}
+
+/* Full droid reading */
+function startDroidSequence() {
+  const lines = [
+    "Danger. Sacred citrus lost.",
+    "Message hidden at the arrival point of secrets.",
+    "Do not delay. The Empire is listening.",
+    "Access code: CITRON-OVERRIDE"
+  ];
+
+  let delay = 0;
+
+  lines.forEach((text, i) => {
+    setTimeout(() => {
+      droidSpeak(text, (wordIdx) => {
+        if (wordIdx > 0 && wordIdx % 3 === 0) {
+          beep(1200 + Math.random() * 400, 0.06, 0, 0.12);
+        }
+      });
+      if (i < lines.length - 1) {
+        setTimeout(() => beep(900 + Math.random() * 600, 0.08, 0, 0.1), 300);
+      }
+    }, delay);
+    delay += text.length * 70 + 400;
+  });
+
+  /* Final celebration beeps */
+  setTimeout(() => {
+    beep(1100, 0.1, 0, 0.15);
+    beep(1400, 0.1, 0.15, 0.15);
+    beep(900, 0.12, 0.3, 0.15);
+  }, delay + 500);
+}
+
+/* Boot */
+playR2D2Beeps();
+
+/* Load voices (async) and start droid at ~20s */
+if (speechSynthesis.getVoices().length === 0) {
+  speechSynthesis.addEventListener("voiceschanged", () => {}, { once: true });
+}
+setTimeout(startDroidSequence, 15000);
 </script>
 
 </body>
