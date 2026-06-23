@@ -231,17 +231,12 @@ function playR2D2Beeps() {
   audioUnlocked = true;
 }
 
-/* Droid speech synthesis */
+/* Droid speech synthesis — pitch modéré pour rester compréhensible */
 function droidSpeak(text, onWord) {
   const u = new SpeechSynthesisUtterance(text);
-  const voices = speechSynthesis.getVoices();
-  const droidVoice = voices.find(v =>
-    /zira|david|microsoft/i.test(v.name) && v.lang.startsWith("en")
-  );
-  if (droidVoice) u.voice = droidVoice;
   u.lang = "en-US";
-  u.pitch = 2.5;
-  u.rate = 1.7;
+  u.pitch = 1.2;
+  u.rate = 1.1;
   u.volume = 1;
 
   if (onWord) {
