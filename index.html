@@ -11,6 +11,7 @@ body {
   background: black;
   overflow: hidden;
   font-family: Arial, sans-serif;
+  touch-action: manipulation;
 }
 
 /* 🌌 STARFIELD */
@@ -21,43 +22,44 @@ body {
   background: radial-gradient(circle at center, #05060a 0%, black 70%);
 }
 
-/* 🎬 CRAWL */
+/* 🎬 CRAWL MOBILE OPTIMISÉ */
 .crawl-container {
   position: relative;
   height: 100vh;
-  perspective: 300px;
+  perspective: 280px;
   color: #ffe81f;
+  display: flex;
+  justify-content: center;
 }
 
 .crawl {
   position: absolute;
-  bottom: -200%;
-  width: 100vw;
-  left: 0;
+  bottom: -220%;
+  width: 100%;
 
   transform-origin: 50% 100%;
-  transform: rotateX(40deg);
+  transform: rotateX(38deg);
 
-  animation: crawl 60s linear forwards;
+  animation: crawl 65s linear forwards;
 
-  font-size: 62px;
+  font-size: 8vw;         /* 📱 RESPONSIVE MOBILE */
   font-weight: 900;
-  letter-spacing: 4px;
+  letter-spacing: 2px;
   text-transform: uppercase;
 
-  padding: 0 7vw;
-  line-height: 2.2;
-
-  text-shadow:
-    0 0 10px rgba(255,232,31,0.6),
-    0 0 20px rgba(255,232,31,0.3);
+  padding: 0 6vw;
+  line-height: 1.9;
 
   text-align: justify;
+
+  text-shadow:
+    0 0 8px rgba(255,232,31,0.5),
+    0 0 16px rgba(255,232,31,0.25);
 }
 
 @keyframes crawl {
-  0% { transform: rotateX(40deg) translateY(120%); }
-  100% { transform: rotateX(40deg) translateY(-260%); }
+  0% { transform: rotateX(38deg) translateY(120%); }
+  100% { transform: rotateX(38deg) translateY(-280%); }
 }
 
 /* 📡 GLITCH */
@@ -73,30 +75,15 @@ body {
   100% { transform: translate(0,0); }
 }
 
-/* 🔴 EMPIRE FLASH */
+/* 🔴 FLASH EMPIRE */
 .red-flash {
   animation: flash 0.4s ease;
 }
 
 @keyframes flash {
   0% { background: rgba(0,0,0,0); }
-  50% { background: rgba(255,0,0,0.4); }
+  50% { background: rgba(255,0,0,0.35); }
   100% { background: rgba(0,0,0,0); }
-}
-
-/* 💀 FAIL */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  color: red;
-  font-size: 32px;
-  font-weight: 900;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  z-index: 9999;
 }
 </style>
 </head>
@@ -120,13 +107,13 @@ THE MISSION IS COMPROMISED.
 
 GROGU TRANSMISSION
 
-DANGER... SACRED CITRUS LOST...
+DANGER. SACRED CITRUS LOST.
 
-THE MAILBOX HOLDS THE FIRST CLUE...
+THE MAILBOX HOLDS THE FIRST CLUE.
 
-DO NOT DELAY...
+DO NOT DELAY.
 
-THE EMPIRE IS LISTENING...
+THE EMPIRE IS LISTENING.
 
 —
 
@@ -136,16 +123,10 @@ CITRON-OVERRIDE
   </div>
 </div>
 
-<div id="fail" class="overlay">
-IMPERIAL DETECTION SYSTEM<br><br>
-TRANSMISSION COMPROMISED<br><br>
-REBOOTING MISSION...
-</div>
-
 <script>
 
 /* =========================
-   GALAXY STARFIELD (3 LAYERS)
+   🌌 STARFIELD (3 LAYERS)
 ========================= */
 
 const canvas = document.getElementById("stars");
@@ -159,9 +140,9 @@ resize();
 window.addEventListener("resize", resize);
 
 const layers = [
-  { count: 120, speed: 0.4, size: 0.8, alpha: 0.3 },
-  { count: 180, speed: 1.0, size: 1.5, alpha: 0.6 },
-  { count: 140, speed: 2.2, size: 2.5, alpha: 1.0 }
+  { count: 100, speed: 0.5, size: 0.8, alpha: 0.3 },
+  { count: 160, speed: 1.2, size: 1.5, alpha: 0.6 },
+  { count: 120, speed: 2.0, size: 2.2, alpha: 1.0 }
 ];
 
 const stars = [];
@@ -209,7 +190,7 @@ function draw(){
 draw();
 
 /* =========================
-   AUDIO ENGINE
+   🔊 AUDIO ENGINE MOBILE SAFE
 ========================= */
 
 let audioCtx;
@@ -220,74 +201,70 @@ function initAudio(){
   }
 }
 
-/* RADIO */
-function radio(){
-  const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*3, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-
-  for(let i=0;i<data.length;i++){
-    data[i] = (Math.random()*2-1)*0.08;
-  }
-
-  const noise = audioCtx.createBufferSource();
-  noise.buffer = buffer;
-  noise.loop = true;
-
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = "bandpass";
-  filter.frequency.value = 900;
-  filter.Q.value = 10;
-
-  const gain = audioCtx.createGain();
-  gain.gain.value = 0.18;
-
-  noise.connect(filter);
-  filter.connect(gain);
-  gain.connect(audioCtx.destination);
-
-  noise.start();
-}
-
-/* BIP */
 function beep(){
   const o = audioCtx.createOscillator();
   const g = audioCtx.createGain();
 
   o.type = "square";
-  o.frequency.value = 300 + Math.random()*900;
+  o.frequency.value = 400 + Math.random()*800;
 
-  g.gain.value = 0.2;
+  g.gain.value = 0.15;
 
   o.connect(g);
   g.connect(audioCtx.destination);
 
   o.start();
-  o.stop(audioCtx.currentTime + 0.1);
-}
-
-/* VOICE */
-function voice(){
-  const msg = new SpeechSynthesisUtterance(
-    "Danger. Sacred citrus lost. The mailbox holds the first clue. The Empire is listening. Access code Citron Override."
-  );
-
-  msg.lang = "en-GB";
-  msg.rate = 0.72;
-  msg.pitch = 0.25;
-
-  speechSynthesis.speak(msg);
+  o.stop(audioCtx.currentTime + 0.08);
 }
 
 /* =========================
-   EFFECTS
+   🎤 SYNCHRONISED VOICE
 ========================= */
 
-let warpSpeed = 2;
+const voiceLines = [
+  "Danger.",
+  "Sacred citrus lost.",
+  "The mailbox holds the first clue.",
+  "Do not delay.",
+  "The Empire is listening.",
+  "Access code Citron Override."
+];
 
-function warp(){
-  warpSpeed = 25;
-  setTimeout(()=>warpSpeed=2,2500);
+function playSyncedVoice(){
+
+  let t = 0;
+
+  voiceLines.forEach((line,i)=>{
+
+    setTimeout(()=>{
+
+      const msg = new SpeechSynthesisUtterance(line);
+      msg.lang = "en-GB";
+      msg.rate = 0.72;
+      msg.pitch = 0.25;
+
+      speechSynthesis.speak(msg);
+
+      beep();
+
+      if(i === 3 || i === 4){
+        flash();
+        glitch();
+      }
+
+      if(i === 5){
+        vibrate();
+      }
+
+    }, t);
+
+    t += (i < 2 ? 1400 : 1200);
+  });
 }
+
+/* =========================
+   ⚡ EFFECTS
+========================= */
 
 function flash(){
   document.body.classList.add("red-flash");
@@ -296,36 +273,17 @@ function flash(){
 
 function glitch(){
   document.body.classList.add("glitch");
-  setTimeout(()=>document.body.classList.remove("glitch"),3000);
+  setTimeout(()=>document.body.classList.remove("glitch"),2500);
 }
 
 function vibrate(){
   if(navigator.vibrate){
-    navigator.vibrate([200,100,200,500]);
+    navigator.vibrate([150,100,150,400]);
   }
 }
 
 /* =========================
-   FAIL STATE
-========================= */
-
-let failTimer;
-
-function fail(){
-  document.getElementById("fail").style.display="flex";
-  setTimeout(()=>{
-    document.getElementById("fail").style.display="none";
-    start();
-  },4000);
-}
-
-function startFail(){
-  clearTimeout(failTimer);
-  failTimer = setTimeout(fail,20000);
-}
-
-/* =========================
-   MAIN SEQUENCE
+   🚀 MAIN SEQUENCE (TIMED CINEMA)
 ========================= */
 
 function start(){
@@ -333,32 +291,27 @@ function start(){
   initAudio();
   audioCtx.resume();
 
-  radio();
-  voice();
-
-  warp();
-  glitch();
-  vibrate();
-
-  for(let i=0;i<22;i++){
-    setTimeout(beep,i*140);
+  // ambiance immédiate
+  for(let i=0;i<6;i++){
+    setTimeout(beep,i*250);
   }
 
-  setTimeout(flash,5000);
+  // transmission synchronisée APRÈS lecture crawl
+  setTimeout(()=>{
+    playSyncedVoice();
+  }, 8500);
 }
 
 /* =========================
-   INIT (MOBILE SAFE)
+   📱 NFC / MOBILE START
 ========================= */
 
 document.addEventListener("click",()=>{
   start();
-  startFail();
 },{once:true});
 
 setTimeout(()=>{
   start();
-  startFail();
 },12000);
 
 </script>
