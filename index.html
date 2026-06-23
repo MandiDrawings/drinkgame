@@ -21,18 +21,18 @@ body {
   background: black;
 }
 
-/* 🎬 CRAWL CONTAINER (FIX MOBILE STAR WARS) */
+/* 🎬 CRAWL CONTAINER */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 350px;
+  perspective: 380px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
 }
 
-/* 🎬 CRAWL PROPRE */
+/* 🎬 CRAWL STAR WARS PROPRE */
 .crawl {
   position: absolute;
 
@@ -44,12 +44,12 @@ body {
   transform-origin: 50% 100%;
   transform: rotateX(45deg);
 
-  animation: crawl 35s linear forwards;
+  animation: crawl 70s linear forwards;
 
-  font-size: 6.5vw;
+  font-size: 6.3vw;
   font-weight: 900;
-  letter-spacing: 1.5px;
-  line-height: 1.8;
+  letter-spacing: 1.6px;
+  line-height: 2;
 
   text-transform: uppercase;
   text-align: justify;
@@ -57,14 +57,14 @@ body {
   color: #ffe81f;
 
   text-shadow:
-    0 0 8px rgba(255,232,31,0.6),
-    0 0 18px rgba(255,232,31,0.3);
+    0 0 10px rgba(255,232,31,0.6),
+    0 0 20px rgba(255,232,31,0.25);
 }
 
-/* 🎬 DÉFILEMENT STAR WARS RÉEL */
+/* 🎬 DÉFILEMENT LENT TYPE FILM */
 @keyframes crawl {
-  0% { transform: rotateX(45deg) translateY(50%); }
-  100% { transform: rotateX(45deg) translateY(-260%); }
+  0% { transform: rotateX(45deg) translateY(65%); }
+  100% { transform: rotateX(45deg) translateY(-340%); }
 }
 
 /* 🌌 VIGNETTE CINÉMA */
@@ -75,7 +75,7 @@ body::before {
   background: radial-gradient(
     ellipse at center,
     transparent 0%,
-    rgba(0,0,0,0.5) 60%,
+    rgba(0,0,0,0.55) 65%,
     black 100%
   );
   pointer-events: none;
@@ -92,21 +92,23 @@ body::before {
 
 A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
+THIS IS AN ACTIVE IMPERIAL TRANSMISSION.
+
+A COMPROMISED SIGNAL HAS BEEN DETECTED.
+
 THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
 
 ALL NAVIGATION RECORDS HAVE BEEN ERASED.
-
-THIS TRANSMISSION WAS ACTIVATED FROM A SECURE IMPERIAL RELAY NODE.
 
 —
 
 GROGU TRANSMISSION
 
-YOU HAVE ACCESSED A COMPROMISED SIGNAL.
+YOU HAVE ACTIVATED A SECURE IMPERIAL RELAY NODE.
 
-THIS IS NOT A LOCATION TO SEARCH.
+THIS IS NOT A CLUE LOCATION.
 
-THIS IS A LIVE BROADCAST.
+THIS IS A LIVE BROADCAST SYSTEM.
 
 THE MESSAGE WAS DELIVERED DIRECTLY TO YOU.
 
@@ -127,7 +129,7 @@ CITRON-OVERRIDE
 <script>
 
 /* =========================
-   🌌 STARFIELD SIMPLE + VISIBLE
+   🌌 STARFIELD FLUIDE
 ========================= */
 
 const canvas = document.getElementById("stars");
@@ -142,7 +144,7 @@ window.addEventListener("resize", resize);
 
 const stars = [];
 
-for(let i=0;i<300;i++){
+for(let i=0;i<280;i++){
   stars.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
@@ -157,7 +159,7 @@ function draw(){
 
   for(let s of stars){
 
-    s.z -= 1.5;
+    s.z -= 1.4;
 
     if(s.z <= 0){
       s.x = Math.random()*canvas.width;
@@ -165,7 +167,7 @@ function draw(){
       s.z = canvas.width;
     }
 
-    const k = 200 / s.z;
+    const k = 220 / s.z;
 
     const px = (s.x - canvas.width/2) * k + canvas.width/2;
     const py = (s.y - canvas.height/2) * k + canvas.height/2;
@@ -184,7 +186,7 @@ function draw(){
 draw();
 
 /* =========================
-   🔊 AUDIO SIMPLE
+   🔊 AUDIO SIMPLE CINÉMA
 ========================= */
 
 let audioCtx;
@@ -200,7 +202,7 @@ function beep(){
   const g = audioCtx.createGain();
 
   o.type = "square";
-  o.frequency.value = 500 + Math.random()*400;
+  o.frequency.value = 480 + Math.random()*500;
 
   g.gain.value = 0.08;
 
@@ -211,27 +213,28 @@ function beep(){
   o.stop(audioCtx.currentTime + 0.06);
 }
 
-/* 🎼 MUSIQUE SIMPLE PROGRESSIVE */
+/* 🎼 MUSIQUE PROGRESSIVE */
 function music(){
+
   const gain = audioCtx.createGain();
   gain.gain.value = 0;
   gain.connect(audioCtx.destination);
 
   const osc = audioCtx.createOscillator();
   osc.type = "sawtooth";
-  osc.frequency.value = 60;
+  osc.frequency.value = 58;
 
   osc.connect(gain);
   osc.start();
 
-  gain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 10);
+  gain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 12);
 }
 
 /* 🎤 VOIX SYNCHRONISÉE */
 const lines = [
   "Danger.",
   "Sacred citrus lost.",
-  "Transmission compromised.",
+  "A compromised signal is active.",
   "The Empire is listening.",
   "Do not break the link.",
   "Access code Citron Override."
@@ -256,12 +259,12 @@ function voice(){
 
     }, t);
 
-    t += 1200;
+    t += 1350;
   });
 }
 
 /* =========================
-   🚀 START (CLEAN FLOW)
+   🚀 START FLOW PROPRE
 ========================= */
 
 function start(){
@@ -269,21 +272,24 @@ function start(){
   initAudio();
   audioCtx.resume();
 
-  // étoiles déjà actives
+  // ambiance immédiate
+  for(let i=0;i<5;i++){
+    setTimeout(beep,i*200);
+  }
 
-  // musique après un court délai
+  // musique progressive
   setTimeout(()=>{
     music();
   },1200);
 
-  // voix après crawl lisible
+  // voix après immersion + lecture crawl
   setTimeout(()=>{
     voice();
-  },8500);
+  },9000);
 }
 
 /* =========================
-   📱 MOBILE / NFC TRIGGER
+   📱 TRIGGER MOBILE / NFC
 ========================= */
 
 document.addEventListener("click",()=>{
