@@ -21,11 +21,11 @@ body {
   background: black;
 }
 
-/* 🎬 STAR WARS CRAWL ACCURATE */
+/* 🎬 CRAWL STABLE & READABLE */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 420px;
+  perspective: 380px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -35,20 +35,22 @@ body {
 .crawl {
   position: absolute;
 
-  width: 85vw;
-  max-width: 650px;
+  width: 88vw;
+  max-width: 620px;
 
-  bottom: -140%;
+  /* IMPORTANT: commence déjà visible */
+  bottom: -80%;
 
   transform-origin: 50% 100%;
-  transform: rotateX(48deg);
+  transform: rotateX(45deg) translateY(0%);
 
-  animation: crawl 78s linear forwards;
+  /* ⚖️ RYTHME ÉQUILIBRÉ */
+  animation: crawl 58s linear forwards;
 
-  font-size: 5.8vw;
+  font-size: 6.3vw;
   font-weight: 900;
-  letter-spacing: 1.8px;
-  line-height: 2.1;
+  letter-spacing: 1.6px;
+  line-height: 2;
 
   text-transform: uppercase;
   text-align: justify;
@@ -56,21 +58,21 @@ body {
   color: #ffe81f;
 
   text-shadow:
-    0 0 12px rgba(255,232,31,0.6),
-    0 0 26px rgba(255,232,31,0.25);
+    0 0 10px rgba(255,232,31,0.6),
+    0 0 20px rgba(255,232,31,0.25);
 }
 
-/* 🎬 STAR WARS MOVEMENT (closer to film pacing) */
+/* 🎬 DÉFILEMENT CONTRÔLÉ */
 @keyframes crawl {
   0% {
-    transform: rotateX(48deg) translateY(25%);
+    transform: rotateX(45deg) translateY(20%);
   }
   100% {
-    transform: rotateX(48deg) translateY(-360%);
+    transform: rotateX(45deg) translateY(-300%);
   }
 }
 
-/* 🌌 CINEMA VIGNETTE */
+/* 🌌 VIGNETTE CINÉMA */
 body::before {
   content: "";
   position: fixed;
@@ -99,7 +101,7 @@ THIS IS AN ACTIVE IMPERIAL TRANSMISSION.
 
 A COMPROMISED SIGNAL HAS BEEN DETECTED.
 
-THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
+THE SACRED LEMON HAS BEEN INTERCEPTED.
 
 ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
@@ -109,11 +111,11 @@ GROGU TRANSMISSION
 
 YOU HAVE ACTIVATED A SECURE IMPERIAL RELAY NODE.
 
-THIS IS NOT A CLUE LOCATION.
+THIS IS NOT A SEARCH LOCATION.
 
 THIS IS A LIVE BROADCAST.
 
-THE SIGNAL WAS DELIVERED DIRECTLY TO YOU.
+THE MESSAGE WAS DELIVERED TO YOU.
 
 YOUR MISSION HAS ALREADY BEGUN.
 
@@ -131,7 +133,7 @@ CITRON-OVERRIDE
 
 <script>
 
-/* 🌌 STARFIELD (cinematic density) */
+/* 🌌 STARFIELD SIMPLE */
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -144,7 +146,7 @@ window.addEventListener("resize", resize);
 
 const stars = [];
 
-for(let i=0;i<320;i++){
+for(let i=0;i<280;i++){
   stars.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
@@ -158,7 +160,7 @@ function draw(){
 
   for(let s of stars){
 
-    s.z -= 1.2;
+    s.z -= 1.4;
 
     if(s.z <= 0){
       s.x = Math.random()*canvas.width;
@@ -166,14 +168,14 @@ function draw(){
       s.z = canvas.width;
     }
 
-    const k = 240 / s.z;
+    const k = 220 / s.z;
 
     const px = (s.x - canvas.width/2) * k + canvas.width/2;
     const py = (s.y - canvas.height/2) * k + canvas.height/2;
 
-    if(px>0 && px<canvas.width && py>0 && py<canvas.height){
+    if(px > 0 && px < canvas.width && py > 0 && py < canvas.height){
 
-      const size = 2.2 * (1 - s.z / canvas.width);
+      const size = 2 * (1 - s.z / canvas.width);
 
       ctx.fillStyle = "white";
       ctx.fillRect(px, py, size, size);
@@ -183,84 +185,6 @@ function draw(){
   requestAnimationFrame(draw);
 }
 draw();
-
-/* 🔊 AUDIO CINEMATIC CORE */
-let audioCtx;
-
-function initAudio(){
-  if(!audioCtx){
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-}
-
-/* 🎼 orchestral-like bed */
-function music(){
-  const gain = audioCtx.createGain();
-  gain.gain.value = 0;
-  gain.connect(audioCtx.destination);
-
-  const osc1 = audioCtx.createOscillator();
-  osc1.type = "sawtooth";
-  osc1.frequency.value = 55;
-
-  const osc2 = audioCtx.createOscillator();
-  osc2.type = "triangle";
-  osc2.frequency.value = 110;
-
-  osc1.connect(gain);
-  osc2.connect(gain);
-
-  osc1.start();
-  osc2.start();
-
-  gain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 14);
-}
-
-/* 🎤 VOICE SYNC */
-const lines = [
-  "Danger.",
-  "Sacred citrus lost.",
-  "Transmission compromised.",
-  "The Empire is listening.",
-  "Do not break the link.",
-  "Access code Citron Override."
-];
-
-function voice(){
-
-  let t = 0;
-
-  lines.forEach((l)=>{
-
-    setTimeout(()=>{
-
-      const msg = new SpeechSynthesisUtterance(l);
-      msg.lang = "en-GB";
-      msg.rate = 0.72;
-      msg.pitch = 0.25;
-
-      speechSynthesis.speak(msg);
-
-    }, t);
-
-    t += 1400;
-  });
-}
-
-/* 🚀 START */
-function start(){
-
-  initAudio();
-  audioCtx.resume();
-
-  setTimeout(()=>music(), 1200);
-  setTimeout(()=>voice(), 9000);
-}
-
-/* 📱 TRIGGER */
-document.addEventListener("click",()=>start(),{once:true});
-
-setTimeout(()=>start(),12000);
 
 </script>
 
