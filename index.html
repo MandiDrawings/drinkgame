@@ -1,103 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <style>
-  body { margin: 0; background: black; color: #ffe81f; font-family: 'Courier New', sans-serif; overflow: hidden; }
-  canvas { position: fixed; inset: 0; z-index: -1; }
-  
-  .crawl-container { position: absolute; top: 0; width: 100%; height: 100%; perspective: 400px; display: flex; justify-content: center; }
-  .crawl { 
-    width: 80%; margin-top: 100vh; transform-origin: 50% 100%; transform: rotateX(25deg); 
-    animation: crawl 90s linear forwards; font-size: 4vw; font-weight: 700; text-transform: uppercase; text-align: justify;
-  }
-  @keyframes crawl { 0% { transform: rotateX(25deg) translateY(0%); } 100% { transform: rotateX(25deg) translateY(-250%); } }
+    body, html { margin: 0; padding: 0; height: 100%; background-color: black; color: #ffe81f; font-family: 'Times New Roman', serif; overflow: hidden; }
+    
+    /* Image de fond fixe */
+    #background-space { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%); 
+        z-index: -1; 
+    }
 
-  /* Petit Glitch subtil */
-  .glitch-effect { animation: subtle-glitch 4s infinite; }
-  @keyframes subtle-glitch {
-    0%, 98%, 100% { transform: skew(0deg); opacity: 1; }
-    99% { transform: skew(2deg); opacity: 0.8; }
-  }
+    /* Conteneur texte */
+    .transmission-container { 
+        position: relative; width: 80%; margin: 50px auto; 
+        font-size: 24px; text-transform: uppercase; line-height: 1.5; 
+    }
 
-  .code { color: #00ff41; margin-top: 20px; text-align: center; }
+    .code { color: #00ff41; font-weight: bold; margin-top: 30px; }
 </style>
 </head>
 <body>
 
-<canvas id="stars"></canvas>
-<div class="crawl-container">
-  <div class="crawl glitch-effect">
-    A LONG TIME AGO, IN A GALAXY FAR, FAR AWAY...<br><br>
-    THE SACRED LEMON has been intercepted during transit to the Free Cocktail Systems. An unknown Imperial faction has disrupted all official channels and erased its trajectory from the archives. The Republic denies any involvement. What remains is chaos… and a single surviving trace.<br><br>
-    A small Force-sensitive being has left a fragmented transmission.<br>
-    — GROGU —<br><br>
-    “Danger… sacred citrus lost…”<br>
+<div id="background-space"></div>
+
+<div class="transmission-container">
+    <p>A LONG TIME AGO, IN A GALAXY FAR, FAR AWAY...</p>
+    <p>THE SACRED LEMON has been intercepted during transit to the Free Cocktail Systems. An unknown Imperial faction has disrupted all official channels and erased its trajectory from the archives. The Republic denies any involvement. What remains is chaos… and a single surviving trace.</p>
+    <p>A small Force-sensitive being has left a fragmented transmission: GROGU.</p>
+    <p>“Danger… sacred citrus lost…”<br>
     “Message hidden at the arrival point of secrets…”<br>
     “The mailbox holds the first clue…”<br>
-    “Do not delay… the Empire is listening…”<br><br>
-    Before the signal fades completely, Grogu embedded a security override.<br><br>
-    <div class="code">ACCESS CODE: CITRON-OVERRIDE</div><br>
-    Use it to unlock the Imperial pathway. May the Force guide your cocktail.
-  </div>
+    “Do not delay… the Empire is listening…”</p>
+    <p>Before the signal fades completely, Grogu embedded a security override.</p>
+    <p class="code">ACCESS CODE: CITRON-OVERRIDE</p>
+    <p>Use it to unlock the Imperial pathway and continue the mission. May the Force guide your cocktail.</p>
 </div>
 
 <script>
-  // Effet R2D2
-  function r2d2() {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [600, 900, 500].forEach((f, i) => {
-      setTimeout(() => {
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = "square"; o.frequency.value = f; g.gain.value = 0.05;
-        o.connect(g); g.connect(ctx.destination);
-        o.start(); o.stop(ctx.currentTime + 0.1);
-      }, i * 300);
-    });
-  }
+    // Audio simple au clic
+    document.addEventListener("click", () => {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // R2D2 Bip
+        const osc = audioCtx.createOscillator();
+        osc.frequency.value = 800;
+        osc.connect(audioCtx.destination);
+        osc.start(); osc.stop(0.2);
 
-  // Voix robotique
-  function talk() {
-    const msg = new SpeechSynthesisUtterance("Danger, sacred citrus lost. Message hidden at the arrival point of secrets. The mailbox holds the first clue. Do not delay, the Empire is listening. Access code: Citron Override.");
-    msg.pitch = 0.5; msg.rate = 0.8; msg.lang = "en-GB";
-    speechSynthesis.speak(msg);
-  }
-
-  document.addEventListener("click", () => {
-    r2d2();
-    setTimeout(talk, 1500);
-  }, {once: true});
-
-  // Fond étoilé
-  const canvas = document.getElementById("stars");
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-  function draw() {
-    ctx.fillStyle = "black"; ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle = "white";
-    for(let i=0; i<200; i++) ctx.fillRect(Math.random()*canvas.width, Math.random()*canvas.height, 2, 2);
-    requestAnimationFrame(draw);
-  }
-  draw();
-</script>
-</body>
-</html>
-    osc.start();
-    osc.stop(ctxAudio.currentTime + t);
-  }
-
-  setTimeout(()=>beep(600,0.12), 1500);
-  setTimeout(()=>beep(900,0.10), 1800);
-  setTimeout(()=>beep(500,0.15), 2200);
-  setTimeout(()=>beep(750,0.12), 2600);
-}
-
-/* ▶ activation audio */
-document.addEventListener("click", ()=>{
-  r2d2();
-}, {once:true});
-
+        // Synthèse vocale
+        const msg = new SpeechSynthesisUtterance("Danger, sacred citrus lost. Access code: Citron Override.");
+        msg.lang = "en-GB";
+        speechSynthesis.speak(msg);
+    }, {once: true});
 </script>
 
 </body>
