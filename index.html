@@ -181,7 +181,7 @@ function draw() {
 
 draw();
 
-/* Audio context — unlock on every call */
+/* Audio context — aggressive autoplay unlock */
 let audioCtx;
 let audioUnlocked = false;
 
@@ -195,10 +195,33 @@ function getAudioCtx() {
   return audioCtx;
 }
 
-/* Retry unlock every 3s in case browser blocks autoplay */
-setInterval(() => {
+/* Prime audio system immediately */
+(function primeAudio() {
+  const c = getAudioCtx();
+  if (c.state === "suspended") c.resume();
+  /* tiny silent beep to wake audio subsystem */
+  try {
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    g.gain.value = 0.0001;
+    osc.connect(g);
+    g.connect(c.destination);
+    osc.start();
+    osc.stop(c.currentTime + 0.02);
+  } catch (e) {}
+  /* prime SpeechSynthesis too */
+  try {
+    const m = new SpeechSynthesisUtterance(" ");
+    m.volume = 0;
+    speechSynthesis.speak(m);
+  } catch (e) {}
+})();
+
+/* Retry unlock every 500ms until audio works */
+(function keepUnlocking() {
   if (!audioUnlocked) getAudioCtx();
-}, 3000);
+  if (!audioUnlocked) setTimeout(keepUnlocking, 500);
+})();
 
 /* R2D2 beep */
 function beep(freq, dur, delay, vol) {
@@ -289,11 +312,22 @@ function startDroidSequence() {
 /* Boot */
 playR2D2Beeps();
 
-/* Load voices (async) and start droid at ~20s */
+/* Load voices */
 if (speechSynthesis.getVoices().length === 0) {
   speechSynthesis.addEventListener("voiceschanged", () => {}, { once: true });
 }
-setTimeout(startDroidSequence, 15000);
+
+let droidStarted = false;
+const droidTimer = setTimeout(() => { droidStarted = true; startDroidSequence(); }, 15000);
+
+/* If somehow still blocked after 10s, force a final resume burst */
+setTimeout(() => {
+  if (audioCtx && audioCtx.state === "suspended") {
+    for (let i = 0; i < 10; i++) {
+      setTimeout(() => getAudioCtx(), i * 100);
+    }
+  }
+}, 10000);
 </script>
 
 </body>
