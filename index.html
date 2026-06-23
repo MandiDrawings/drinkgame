@@ -22,14 +22,14 @@ body {
   background: radial-gradient(circle at center, #05060a 0%, black 70%);
 }
 
-/* 🎬 CRAWL MOBILE OPTIMISÉ */
+/* 🎬 CRAWL MOBILE */
 .crawl-container {
   position: relative;
   height: 100vh;
   perspective: 280px;
-  color: #ffe81f;
   display: flex;
   justify-content: center;
+  color: #ffe81f;
 }
 
 .crawl {
@@ -42,7 +42,7 @@ body {
 
   animation: crawl 65s linear forwards;
 
-  font-size: 8vw;         /* 📱 RESPONSIVE MOBILE */
+  font-size: 8vw;
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -53,8 +53,8 @@ body {
   text-align: justify;
 
   text-shadow:
-    0 0 8px rgba(255,232,31,0.5),
-    0 0 16px rgba(255,232,31,0.25);
+    0 0 10px rgba(255,232,31,0.5),
+    0 0 20px rgba(255,232,31,0.2);
 }
 
 @keyframes crawl {
@@ -75,8 +75,8 @@ body {
   100% { transform: translate(0,0); }
 }
 
-/* 🔴 FLASH EMPIRE */
-.red-flash {
+/* 🔴 FLASH */
+.flash {
   animation: flash 0.4s ease;
 }
 
@@ -97,11 +97,11 @@ body {
 
 A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
-THE SACRED LEMON HAS BEEN INTERCEPTED.
+THE SACRED LEMON HAS BEEN INTERCEPTED BY AN IMPERIAL FACTION.
 
-AN IMPERIAL FACTION HAS ERASED ALL NAVIGATION DATA.
+ALL NAVIGATION RECORDS HAVE BEEN ERASED.
 
-THE MISSION IS COMPROMISED.
+THIS IS AN INTERCEPTED TRANSMISSION.
 
 —
 
@@ -109,11 +109,11 @@ GROGU TRANSMISSION
 
 DANGER. SACRED CITRUS LOST.
 
-THE MAILBOX HOLDS THE FIRST CLUE.
-
-DO NOT DELAY.
+THE SIGNAL HAS BEEN COMPROMISED.
 
 THE EMPIRE IS LISTENING.
+
+DO NOT DELAY.
 
 —
 
@@ -126,7 +126,7 @@ CITRON-OVERRIDE
 <script>
 
 /* =========================
-   🌌 STARFIELD (3 LAYERS)
+   🌌 STARFIELD
 ========================= */
 
 const canvas = document.getElementById("stars");
@@ -190,10 +190,12 @@ function draw(){
 draw();
 
 /* =========================
-   🔊 AUDIO ENGINE MOBILE SAFE
+   🔊 AUDIO ENGINE
 ========================= */
 
 let audioCtx;
+let musicStarted = false;
+let masterGain;
 
 function initAudio(){
   if(!audioCtx){
@@ -208,7 +210,7 @@ function beep(){
   o.type = "square";
   o.frequency.value = 400 + Math.random()*800;
 
-  g.gain.value = 0.15;
+  g.gain.value = 0.12;
 
   o.connect(g);
   g.connect(audioCtx.destination);
@@ -217,24 +219,57 @@ function beep(){
   o.stop(audioCtx.currentTime + 0.08);
 }
 
-/* =========================
-   🎤 SYNCHRONISED VOICE
-========================= */
+/* 🎼 STAR WARS STYLE MUSIC */
+function startMusic(){
 
-const voiceLines = [
+  if(musicStarted) return;
+  musicStarted = true;
+
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0;
+
+  masterGain.connect(audioCtx.destination);
+
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = "sawtooth";
+  osc1.frequency.value = 55;
+
+  const g1 = audioCtx.createGain();
+  g1.gain.value = 0.08;
+
+  osc1.connect(g1);
+  g1.connect(masterGain);
+  osc1.start();
+
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = "triangle";
+  osc2.frequency.value = 110;
+
+  const g2 = audioCtx.createGain();
+  g2.gain.value = 0.05;
+
+  osc2.connect(g2);
+  g2.connect(masterGain);
+  osc2.start();
+
+  masterGain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 12);
+}
+
+/* 🎤 SYNCHRONISED VOICE */
+const lines = [
   "Danger.",
   "Sacred citrus lost.",
-  "The mailbox holds the first clue.",
-  "Do not delay.",
+  "The signal has been compromised.",
   "The Empire is listening.",
+  "Do not delay.",
   "Access code Citron Override."
 ];
 
-function playSyncedVoice(){
+function playVoice(){
 
   let t = 0;
 
-  voiceLines.forEach((line,i)=>{
+  lines.forEach((line,i)=>{
 
     setTimeout(()=>{
 
@@ -247,13 +282,15 @@ function playSyncedVoice(){
 
       beep();
 
-      if(i === 3 || i === 4){
-        flash();
-        glitch();
+      if(i === 2 || i === 3){
+        document.body.classList.add("flash");
+        setTimeout(()=>document.body.classList.remove("flash"),400);
       }
 
       if(i === 5){
-        vibrate();
+        if(navigator.vibrate){
+          navigator.vibrate([150,100,300]);
+        }
       }
 
     }, t);
@@ -263,27 +300,7 @@ function playSyncedVoice(){
 }
 
 /* =========================
-   ⚡ EFFECTS
-========================= */
-
-function flash(){
-  document.body.classList.add("red-flash");
-  setTimeout(()=>document.body.classList.remove("red-flash"),400);
-}
-
-function glitch(){
-  document.body.classList.add("glitch");
-  setTimeout(()=>document.body.classList.remove("glitch"),2500);
-}
-
-function vibrate(){
-  if(navigator.vibrate){
-    navigator.vibrate([150,100,150,400]);
-  }
-}
-
-/* =========================
-   🚀 MAIN SEQUENCE (TIMED CINEMA)
+   🚀 START SEQUENCE
 ========================= */
 
 function start(){
@@ -291,19 +308,24 @@ function start(){
   initAudio();
   audioCtx.resume();
 
-  // ambiance immédiate
-  for(let i=0;i<6;i++){
-    setTimeout(beep,i*250);
+  // étoiles immédiates
+  for(let i=0;i<5;i++){
+    setTimeout(beep,i*200);
   }
 
-  // transmission synchronisée APRÈS lecture crawl
+  // 🎼 musique progressive
   setTimeout(()=>{
-    playSyncedVoice();
-  }, 8500);
+    startMusic();
+  },1500);
+
+  // 🎤 voix plus tard (cinéma)
+  setTimeout(()=>{
+    playVoice();
+  },8500);
 }
 
 /* =========================
-   📱 NFC / MOBILE START
+   📱 NFC / MOBILE TRIGGER
 ========================= */
 
 document.addEventListener("click",()=>{
