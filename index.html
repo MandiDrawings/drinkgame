@@ -21,35 +21,34 @@ body {
   background: black;
 }
 
-/* 🎬 CRAWL CONTAINER */
+/* 🎬 STAR WARS CRAWL ACCURATE */
 .crawl-container {
   position: fixed;
   inset: 0;
-  perspective: 380px;
+  perspective: 420px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
   overflow: hidden;
 }
 
-/* 🎬 CRAWL STAR WARS PROPRE */
 .crawl {
   position: absolute;
 
-  width: 88vw;
-  max-width: 620px;
+  width: 85vw;
+  max-width: 650px;
 
-  bottom: -200%;
+  bottom: -140%;
 
   transform-origin: 50% 100%;
-  transform: rotateX(45deg);
+  transform: rotateX(48deg);
 
-  animation: crawl 70s linear forwards;
+  animation: crawl 78s linear forwards;
 
-  font-size: 6.3vw;
+  font-size: 5.8vw;
   font-weight: 900;
-  letter-spacing: 1.6px;
-  line-height: 2;
+  letter-spacing: 1.8px;
+  line-height: 2.1;
 
   text-transform: uppercase;
   text-align: justify;
@@ -57,17 +56,21 @@ body {
   color: #ffe81f;
 
   text-shadow:
-    0 0 10px rgba(255,232,31,0.6),
-    0 0 20px rgba(255,232,31,0.25);
+    0 0 12px rgba(255,232,31,0.6),
+    0 0 26px rgba(255,232,31,0.25);
 }
 
-/* 🎬 DÉFILEMENT LENT TYPE FILM */
+/* 🎬 STAR WARS MOVEMENT (closer to film pacing) */
 @keyframes crawl {
-  0% { transform: rotateX(45deg) translateY(65%); }
-  100% { transform: rotateX(45deg) translateY(-340%); }
+  0% {
+    transform: rotateX(48deg) translateY(25%);
+  }
+  100% {
+    transform: rotateX(48deg) translateY(-360%);
+  }
 }
 
-/* 🌌 VIGNETTE CINÉMA */
+/* 🌌 CINEMA VIGNETTE */
 body::before {
   content: "";
   position: fixed;
@@ -108,9 +111,9 @@ YOU HAVE ACTIVATED A SECURE IMPERIAL RELAY NODE.
 
 THIS IS NOT A CLUE LOCATION.
 
-THIS IS A LIVE BROADCAST SYSTEM.
+THIS IS A LIVE BROADCAST.
 
-THE MESSAGE WAS DELIVERED DIRECTLY TO YOU.
+THE SIGNAL WAS DELIVERED DIRECTLY TO YOU.
 
 YOUR MISSION HAS ALREADY BEGUN.
 
@@ -128,10 +131,7 @@ CITRON-OVERRIDE
 
 <script>
 
-/* =========================
-   🌌 STARFIELD FLUIDE
-========================= */
-
+/* 🌌 STARFIELD (cinematic density) */
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
 
@@ -144,7 +144,7 @@ window.addEventListener("resize", resize);
 
 const stars = [];
 
-for(let i=0;i<280;i++){
+for(let i=0;i<320;i++){
   stars.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
@@ -153,13 +153,12 @@ for(let i=0;i<280;i++){
 }
 
 function draw(){
-
   ctx.fillStyle = "black";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   for(let s of stars){
 
-    s.z -= 1.4;
+    s.z -= 1.2;
 
     if(s.z <= 0){
       s.x = Math.random()*canvas.width;
@@ -167,14 +166,14 @@ function draw(){
       s.z = canvas.width;
     }
 
-    const k = 220 / s.z;
+    const k = 240 / s.z;
 
     const px = (s.x - canvas.width/2) * k + canvas.width/2;
     const py = (s.y - canvas.height/2) * k + canvas.height/2;
 
-    if(px > 0 && px < canvas.width && py > 0 && py < canvas.height){
+    if(px>0 && px<canvas.width && py>0 && py<canvas.height){
 
-      const size = 2 * (1 - s.z / canvas.width);
+      const size = 2.2 * (1 - s.z / canvas.width);
 
       ctx.fillStyle = "white";
       ctx.fillRect(px, py, size, size);
@@ -185,10 +184,7 @@ function draw(){
 }
 draw();
 
-/* =========================
-   🔊 AUDIO SIMPLE CINÉMA
-========================= */
-
+/* 🔊 AUDIO CINEMATIC CORE */
 let audioCtx;
 
 function initAudio(){
@@ -197,44 +193,34 @@ function initAudio(){
   }
 }
 
-function beep(){
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-
-  o.type = "square";
-  o.frequency.value = 480 + Math.random()*500;
-
-  g.gain.value = 0.08;
-
-  o.connect(g);
-  g.connect(audioCtx.destination);
-
-  o.start();
-  o.stop(audioCtx.currentTime + 0.06);
-}
-
-/* 🎼 MUSIQUE PROGRESSIVE */
+/* 🎼 orchestral-like bed */
 function music(){
-
   const gain = audioCtx.createGain();
   gain.gain.value = 0;
   gain.connect(audioCtx.destination);
 
-  const osc = audioCtx.createOscillator();
-  osc.type = "sawtooth";
-  osc.frequency.value = 58;
+  const osc1 = audioCtx.createOscillator();
+  osc1.type = "sawtooth";
+  osc1.frequency.value = 55;
 
-  osc.connect(gain);
-  osc.start();
+  const osc2 = audioCtx.createOscillator();
+  osc2.type = "triangle";
+  osc2.frequency.value = 110;
 
-  gain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 12);
+  osc1.connect(gain);
+  osc2.connect(gain);
+
+  osc1.start();
+  osc2.start();
+
+  gain.gain.linearRampToValueAtTime(0.22, audioCtx.currentTime + 14);
 }
 
-/* 🎤 VOIX SYNCHRONISÉE */
+/* 🎤 VOICE SYNC */
 const lines = [
   "Danger.",
   "Sacred citrus lost.",
-  "A compromised signal is active.",
+  "Transmission compromised.",
   "The Empire is listening.",
   "Do not break the link.",
   "Access code Citron Override."
@@ -244,7 +230,7 @@ function voice(){
 
   let t = 0;
 
-  lines.forEach((l,i)=>{
+  lines.forEach((l)=>{
 
     setTimeout(()=>{
 
@@ -255,50 +241,26 @@ function voice(){
 
       speechSynthesis.speak(msg);
 
-      beep();
-
     }, t);
 
-    t += 1350;
+    t += 1400;
   });
 }
 
-/* =========================
-   🚀 START FLOW PROPRE
-========================= */
-
+/* 🚀 START */
 function start(){
 
   initAudio();
   audioCtx.resume();
 
-  // ambiance immédiate
-  for(let i=0;i<5;i++){
-    setTimeout(beep,i*200);
-  }
-
-  // musique progressive
-  setTimeout(()=>{
-    music();
-  },1200);
-
-  // voix après immersion + lecture crawl
-  setTimeout(()=>{
-    voice();
-  },9000);
+  setTimeout(()=>music(), 1200);
+  setTimeout(()=>voice(), 9000);
 }
 
-/* =========================
-   📱 TRIGGER MOBILE / NFC
-========================= */
+/* 📱 TRIGGER */
+document.addEventListener("click",()=>start(),{once:true});
 
-document.addEventListener("click",()=>{
-  start();
-},{once:true});
-
-setTimeout(()=>{
-  start();
-},12000);
+setTimeout(()=>start(),12000);
 
 </script>
 
