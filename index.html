@@ -11,17 +11,17 @@ body {
   background: black;
   overflow: hidden;
   font-family: Arial, sans-serif;
-  height: 100vh;
 }
 
-/* 🌌 STAR BACKGROUND */
+/* 🌌 STARFIELD */
 #stars {
   position: fixed;
   inset: 0;
   z-index: -1;
+  background: radial-gradient(circle at center, #05060a 0%, black 70%);
 }
 
-/* 🌌 CRAWL */
+/* 🎬 CRAWL */
 .crawl-container {
   position: relative;
   height: 100vh;
@@ -31,24 +31,33 @@ body {
 
 .crawl {
   position: absolute;
-  bottom: -180%;
+  bottom: -200%;
   width: 100vw;
   left: 0;
 
   transform-origin: 50% 100%;
-  transform: rotateX(35deg);
-  animation: crawl 55s linear forwards;
+  transform: rotateX(40deg);
 
-  font-size: 50px;
+  animation: crawl 60s linear forwards;
+
+  font-size: 62px;
   font-weight: 900;
-  letter-spacing: 2px;
-  padding: 0 10vw;
-  line-height: 1.9;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+
+  padding: 0 7vw;
+  line-height: 2.2;
+
+  text-shadow:
+    0 0 10px rgba(255,232,31,0.6),
+    0 0 20px rgba(255,232,31,0.3);
+
+  text-align: justify;
 }
 
 @keyframes crawl {
-  0% { bottom: -180%; }
-  100% { bottom: 220%; transform: rotateX(35deg) translateZ(-2000px); }
+  0% { transform: rotateX(40deg) translateY(120%); }
+  100% { transform: rotateX(40deg) translateY(-260%); }
 }
 
 /* 📡 GLITCH */
@@ -66,22 +75,22 @@ body {
 
 /* 🔴 EMPIRE FLASH */
 .red-flash {
-  animation: redFlash 0.4s ease;
+  animation: flash 0.4s ease;
 }
 
-@keyframes redFlash {
+@keyframes flash {
   0% { background: rgba(0,0,0,0); }
   50% { background: rgba(255,0,0,0.4); }
   100% { background: rgba(0,0,0,0); }
 }
 
-/* 💀 FAIL OVERLAY */
-.empire-overlay {
+/* 💀 FAIL */
+.overlay {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.9);
   color: red;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 900;
   display: none;
   justify-content: center;
@@ -103,34 +112,41 @@ A LONG TIME AGO IN A GALAXY FAR, FAR AWAY...
 
 THE SACRED LEMON HAS BEEN INTERCEPTED.
 
-An Imperial faction has erased all navigation data.
+AN IMPERIAL FACTION HAS ERASED ALL NAVIGATION DATA.
 
 THE MISSION IS COMPROMISED.
 
-THE SACRED LEMON IS LOST.
+—
 
-— GROGU TRANSMISSION —
+GROGU TRANSMISSION
 
-“Danger… sacred citrus lost…”
-“The mailbox holds the first clue…”
-“Do not delay… the Empire is listening…”
+DANGER... SACRED CITRUS LOST...
 
-ACCESS CODE: CITRON-OVERRIDE
+THE MAILBOX HOLDS THE FIRST CLUE...
+
+DO NOT DELAY...
+
+THE EMPIRE IS LISTENING...
+
+—
+
+ACCESS CODE:
+CITRON-OVERRIDE
 
   </div>
 </div>
 
-<div id="empireOverlay" class="empire-overlay">
+<div id="fail" class="overlay">
 IMPERIAL DETECTION SYSTEM<br><br>
 TRANSMISSION COMPROMISED<br><br>
-REINITIALIZING MISSION...
+REBOOTING MISSION...
 </div>
 
 <script>
 
-/* =====================
-   STARS SYSTEM
-===================== */
+/* =========================
+   GALAXY STARFIELD (3 LAYERS)
+========================= */
 
 const canvas = document.getElementById("stars");
 const ctx = canvas.getContext("2d");
@@ -142,23 +158,32 @@ function resize(){
 resize();
 window.addEventListener("resize", resize);
 
-const stars = [];
-let warpSpeed = 2;
+const layers = [
+  { count: 120, speed: 0.4, size: 0.8, alpha: 0.3 },
+  { count: 180, speed: 1.0, size: 1.5, alpha: 0.6 },
+  { count: 140, speed: 2.2, size: 2.5, alpha: 1.0 }
+];
 
-for(let i=0;i<250;i++){
-  stars.push({
-    x: Math.random()*canvas.width,
-    y: Math.random()*canvas.height,
-    z: Math.random()*canvas.width
-  });
-}
+const stars = [];
+
+layers.forEach(layer => {
+  for(let i=0;i<layer.count;i++){
+    stars.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      z: Math.random()*canvas.width,
+      layer
+    });
+  }
+});
 
 function draw(){
   ctx.fillStyle = "black";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   for(let s of stars){
-    s.z -= warpSpeed;
+
+    s.z -= s.layer.speed;
 
     if(s.z <= 0){
       s.x = Math.random()*canvas.width;
@@ -166,13 +191,15 @@ function draw(){
       s.z = canvas.width;
     }
 
-    let k = 128 / s.z;
-    let px = s.x * k + canvas.width/2;
-    let py = s.y * k + canvas.height/2;
+    const k = 220 / s.z;
+    const px = (s.x - canvas.width/2) * k + canvas.width/2;
+    const py = (s.y - canvas.height/2) * k + canvas.height/2;
 
-    if(px>0 && px<canvas.width && py>0 && py<canvas.height){
-      let size = (1 - s.z/canvas.width) * 2;
-      ctx.fillStyle = "white";
+    if(px > 0 && px < canvas.width && py > 0 && py < canvas.height){
+
+      const size = s.layer.size * (1 - s.z / canvas.width);
+
+      ctx.fillStyle = `rgba(255,255,255,${s.layer.alpha})`;
       ctx.fillRect(px, py, size, size);
     }
   }
@@ -181,9 +208,9 @@ function draw(){
 }
 draw();
 
-/* =====================
+/* =========================
    AUDIO ENGINE
-===================== */
+========================= */
 
 let audioCtx;
 
@@ -193,8 +220,8 @@ function initAudio(){
   }
 }
 
-/* RADIO NOISE */
-function startRadioNoise(){
+/* RADIO */
+function radio(){
   const buffer = audioCtx.createBuffer(1, audioCtx.sampleRate*3, audioCtx.sampleRate);
   const data = buffer.getChannelData(0);
 
@@ -206,13 +233,13 @@ function startRadioNoise(){
   noise.buffer = buffer;
   noise.loop = true;
 
-  const gain = audioCtx.createGain();
-  gain.gain.value = 0.18;
-
   const filter = audioCtx.createBiquadFilter();
   filter.type = "bandpass";
   filter.frequency.value = 900;
   filter.Q.value = 10;
+
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0.18;
 
   noise.connect(filter);
   filter.connect(gain);
@@ -221,138 +248,117 @@ function startRadioNoise(){
   noise.start();
 }
 
-/* R2-D2 BIP */
-function r2Beep(){
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
+/* BIP */
+function beep(){
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
 
-  osc.type = "square";
-  osc.frequency.value = 300 + Math.random()*1000;
+  o.type = "square";
+  o.frequency.value = 300 + Math.random()*900;
 
-  gain.gain.value = 0.2;
+  g.gain.value = 0.2;
 
-  osc.connect(gain);
-  gain.connect(audioCtx.destination);
+  o.connect(g);
+  g.connect(audioCtx.destination);
 
-  osc.start();
-  osc.stop(audioCtx.currentTime + 0.1);
+  o.start();
+  o.stop(audioCtx.currentTime + 0.1);
 }
 
 /* VOICE */
-function playGroguVoice(){
-  const msg = new SpeechSynthesisUtterance();
-
-  msg.text =
-  "Danger. Sacred citrus lost. " +
-  "The mailbox holds the first clue. " +
-  "Do not delay. The Empire is listening. " +
-  "Access code Citron Override.";
+function voice(){
+  const msg = new SpeechSynthesisUtterance(
+    "Danger. Sacred citrus lost. The mailbox holds the first clue. The Empire is listening. Access code Citron Override."
+  );
 
   msg.lang = "en-GB";
   msg.rate = 0.72;
   msg.pitch = 0.25;
-  msg.volume = 1;
 
   speechSynthesis.speak(msg);
 }
 
-/* =====================
+/* =========================
    EFFECTS
-===================== */
+========================= */
 
-function activateWarp(){
+let warpSpeed = 2;
+
+function warp(){
   warpSpeed = 25;
-  setTimeout(()=>warpSpeed=2, 2500);
+  setTimeout(()=>warpSpeed=2,2500);
 }
 
-function empireFlash(){
+function flash(){
   document.body.classList.add("red-flash");
-  setTimeout(()=>document.body.classList.remove("red-flash"), 400);
+  setTimeout(()=>document.body.classList.remove("red-flash"),400);
 }
 
-function startGlitch(){
+function glitch(){
   document.body.classList.add("glitch");
-  setTimeout(()=>document.body.classList.remove("glitch"), 3000);
+  setTimeout(()=>document.body.classList.remove("glitch"),3000);
 }
 
-function vibrateSignal(){
+function vibrate(){
   if(navigator.vibrate){
-    navigator.vibrate([200,100,200,100,500]);
+    navigator.vibrate([200,100,200,500]);
   }
 }
 
-/* =====================
+/* =========================
    FAIL STATE
-===================== */
+========================= */
 
 let failTimer;
-let failActive = false;
 
-function triggerFailState(){
-  failActive = true;
-
-  document.getElementById("empireOverlay").style.display = "flex";
-
-  speechSynthesis.cancel();
-
-  if(navigator.vibrate){
-    navigator.vibrate([300,200,300,200,800]);
-  }
-
+function fail(){
+  document.getElementById("fail").style.display="flex";
   setTimeout(()=>{
-    document.getElementById("empireOverlay").style.display = "none";
-    failActive = false;
-    restartScene();
+    document.getElementById("fail").style.display="none";
+    start();
   },4000);
 }
 
-function restartScene(){
-  warpSpeed = 2;
-  speechSynthesis.cancel();
-  startFailTimer();
-}
-
-function startFailTimer(){
+function startFail(){
   clearTimeout(failTimer);
-  failTimer = setTimeout(triggerFailState, 20000);
+  failTimer = setTimeout(fail,20000);
 }
 
-/* =====================
+/* =========================
    MAIN SEQUENCE
-===================== */
+========================= */
 
-function startTransmission(){
+function start(){
 
   initAudio();
   audioCtx.resume();
 
-  startRadioNoise();
-  playGroguVoice();
+  radio();
+  voice();
 
-  activateWarp();
-  startGlitch();
-  vibrateSignal();
+  warp();
+  glitch();
+  vibrate();
 
   for(let i=0;i<22;i++){
-    setTimeout(()=>r2Beep(), i*140);
+    setTimeout(beep,i*140);
   }
 
-  setTimeout(()=>empireFlash(), 5000);
+  setTimeout(flash,5000);
 }
 
-/* =====================
-   START (mobile safe)
-===================== */
+/* =========================
+   INIT (MOBILE SAFE)
+========================= */
 
-document.addEventListener("click", ()=>{
-  initAudio();
-  startTransmission();
-  startFailTimer();
+document.addEventListener("click",()=>{
+  start();
+  startFail();
 },{once:true});
 
 setTimeout(()=>{
-  startTransmission();
-  startFailTimer();
+  start();
+  startFail();
 },12000);
 
 </script>
